@@ -1,0 +1,15 @@
+
+qdrant-client==1.11.0
+sentence-transformers
+langchain-text-splitters
+
+pymupdf
+pillow
+
+google-generativeai
+python-dotenv
+
+tqdm
+numpy
+
+streamlit

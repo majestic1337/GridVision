@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.env
+
+data/raw_pdfs/*
+data/processed/*
+data/cache/*
+!data/raw_pdfs/.gitkeep 
+!data/processed/.gitkeep
+
+.vscode/
+.idea/
