@@ -2,7 +2,10 @@ import os
 import json
 import uuid
 import torch
-import pickle
+import hashlib
+import fcntl
+import re
+from collections import defaultdict
 from pathlib import Path
 from tqdm import tqdm
 from dotenv import load_dotenv
@@ -24,7 +27,6 @@ COLLECTION_NAME = "grid_vision_manuals"
 
 EMBEDDING_MODEL = "BAAI/bge-m3" 
 VECTOR_SIZE = 1024 
-
 BATCH_SIZE = 16
 
 def get_device():
@@ -34,7 +36,13 @@ def get_device():
     return 'cpu'
 
 def get_qdrant_client():
-    return QdrantClient(url=QDRANT_URL)
+    client = QdrantClient(url=QDRANT_URL)
+    try:
+        client.get_collections()
+        print(f"✓ Connected to Qdrant at {QDRANT_URL}")
+        return client
+    except Exception as e:
+        raise ConnectionError(f"Failed to connect to Qdrant at {QDRANT_URL}: {e}")
 
 def load_processed_log():
     if not LOG_FILE.exists():
@@ -44,8 +52,18 @@ def load_processed_log():
 
 def mark_as_processed(filenames):
     with open(LOG_FILE, "a", encoding="utf-8") as f:
-        for name in filenames:
-            f.write(f"{name}\n")
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        try:
+            for name in filenames:
+                f.write(f"{name}\n")
+            f.flush()
+            os.fsync(f.fileno())
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+
+def generate_deterministic_id(content, source, page):
+    key = f"{source}|{page}|{content[:100]}"
+    return hashlib.md5(key.encode()).hexdigest()
 
 def process_text_optimized(model, client):
     processed_files = load_processed_log()
@@ -58,67 +76,81 @@ def process_text_optimized(model, client):
 
     print(f"Preparing {len(new_files)} text files (CPU stage)...")
     
+    docs_by_source = defaultdict(list)
+    for file_path in new_files:
+        try:
+            source_doc = file_path.stem.split("_page_")[0]
+            docs_by_source[source_doc].append(file_path)
+        except IndexError:
+            print(f"Skipping malformed filename: {file_path.name}")
+
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000, chunk_overlap=150, separators=["\n\n", "\n", ". ", " ", ""]
     )
     
     all_chunks_data = [] 
 
-    for file_path in tqdm(new_files, desc="Reading from disk"):
+    for source_doc, file_list in docs_by_source.items():
+        # Sort by page number
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                text = f.read()
-            
-            source_doc = file_path.stem.split("_page_")[0]
-            page_num = "N/A"
-            if "_page_" in file_path.stem:
-                page_num = file_path.stem.split("_page_")[1].split("_")[0]
+            file_list.sort(key=lambda f: int(f.stem.split("_page_")[1].split("_")[0]))
+        except (ValueError, IndexError):
+            pass
 
-            chunks = splitter.split_text(text)
-            
-            for chunk in chunks:
-                all_chunks_data.append({
-                    "text": chunk,
-                    "filename": file_path.name,
-                    "payload": {
-                        "type": "text",
-                        "content": chunk,
-                        "source": source_doc,
-                        "page": page_num,
-                        "file_path": file_path.name
-                    }
-                })
-        except Exception as e:
-            print(f"Error reading {file_path.name}: {e}")
+        full_text = ""
+        for fp in file_list:
+            with open(fp, "r", encoding="utf-8") as f:
+                text = f.read()
+            try:
+                page_num = fp.stem.split("_page_")[1].split("_")[0]
+                full_text += f"\n\n--- Page {page_num} ---\n\n{text}"
+            except IndexError:
+                continue
+        
+        chunks = splitter.split_text(full_text)
+        
+        for chunk in chunks:
+            # Extract page number approximation from text marker
+            page_match = re.search(r'--- Page (\d+) ---', chunk)
+            page_num = page_match.group(1) if page_match else "N/A"
+
+            all_chunks_data.append({
+                "text": chunk,
+                "filename": f"{source_doc}_processed", 
+                "original_files": [f.name for f in file_list],
+                "payload": {
+                    "type": "text",
+                    "content": chunk,
+                    "source": source_doc,
+                    "page": page_num
+                }
+            })
 
     total_chunks = len(all_chunks_data)
     print(f"Starting GPU processing. Total chunks: {total_chunks}")
-    print(f"Mode: FP16 (High Performance)")
 
     for i in tqdm(range(0, total_chunks, BATCH_SIZE), desc="GPU Encoding"):
         batch = all_chunks_data[i : i + BATCH_SIZE]
-        
         texts = [item["text"] for item in batch]
         
-        embeddings = model.encode(
-            texts, 
-            batch_size=BATCH_SIZE, 
-            show_progress_bar=False, 
-            convert_to_numpy=True,
-            normalize_embeddings=True
-        )
+        embeddings = model.encode(texts, batch_size=BATCH_SIZE, show_progress_bar=False)
 
         points = []
         filenames_done = set()
         
         for idx, vector in enumerate(embeddings):
             item = batch[idx]
+            point_id = generate_deterministic_id(
+                item["payload"]["content"],
+                item["payload"]["source"],
+                item["payload"]["page"]
+            )
             points.append(PointStruct(
-                id=str(uuid.uuid4()),
+                id=point_id,
                 vector=vector.tolist(),
                 payload=item["payload"]
             ))
-            filenames_done.add(item["filename"])
+            filenames_done.update(item["original_files"])
 
         client.upsert(collection_name=COLLECTION_NAME, points=points)
         mark_as_processed(filenames_done)
@@ -139,52 +171,90 @@ def process_images_optimized(model, client):
     
     for i in tqdm(range(0, len(new_images), BATCH_SIZE), desc="GPU Images"):
         batch = new_images[i : i + BATCH_SIZE]
-        texts = [f"Type: Diagram\nDesc: {x['description']}\nSource: {x['source_doc']}" for x in batch]
         
-        embeddings = model.encode(texts, batch_size=BATCH_SIZE, show_progress_bar=False)
-        
-        points = []
-        filenames = []
-        for idx, vector in enumerate(embeddings):
-            item = batch[idx]
-            points.append(PointStruct(
-                id=str(uuid.uuid4()),
-                vector=vector.tolist(),
-                payload={
-                    "type": "image",
-                    "content": item['description'],
-                    "source": item['source_doc'],
-                    "page": item['page_num'],
-                    "image_path": item['image_path']
-                }
-            ))
-            filenames.append(item['image_filename'])
+        try:
+            texts = [f"Type: Diagram\nDesc: {x['description']}\nSource: {x['source_doc']}" for x in batch]
+            embeddings = model.encode(texts, batch_size=BATCH_SIZE, show_progress_bar=False)
             
-        client.upsert(collection_name=COLLECTION_NAME, points=points)
-        mark_as_processed(filenames)
+            points = []
+            filenames = []
+            for idx, vector in enumerate(embeddings):
+                item = batch[idx]
+                point_id = generate_deterministic_id(
+                    item['description'], item['source_doc'], item['page_num']
+                )
+                points.append(PointStruct(
+                    id=point_id,
+                    vector=vector.tolist(),
+                    payload={
+                        "type": "image",
+                        "content": item['description'],
+                        "source": item['source_doc'],
+                        "page": item['page_num'],
+                        "image_path": item['image_path']
+                    }
+                ))
+                filenames.append(item['image_filename'])
+                
+            client.upsert(collection_name=COLLECTION_NAME, points=points)
+            mark_as_processed(filenames)
+
+        except Exception as e:
+            print(f"Error processing image batch {i//BATCH_SIZE}: {e}")
+            # Fallback: process individually
+            for item in batch:
+                try:
+                    text = f"Type: Diagram\nDesc: {item['description']}\nSource: {item['source_doc']}"
+                    embedding = model.encode(text)
+                    point_id = generate_deterministic_id(
+                        item['description'], item['source_doc'], item['page_num']
+                    )
+                    client.upsert(
+                        collection_name=COLLECTION_NAME, 
+                        points=[PointStruct(
+                            id=point_id,
+                            vector=embedding.tolist(),
+                            payload={
+                                "type": "image",
+                                "content": item['description'],
+                                "source": item['source_doc'],
+                                "page": item['page_num'],
+                                "image_path": item['image_path']
+                            }
+                        )]
+                    )
+                    mark_as_processed([item['image_filename']])
+                except Exception as e2:
+                    print(f"Failed to process {item['image_filename']}: {e2}")
 
 def main():
     device = get_device()
     
-    print("Loading model into memory (FP16)...")
-    model = SentenceTransformer(
-        EMBEDDING_MODEL, 
-        device=device,
-        model_kwargs={"torch_dtype": torch.float16} 
-    )
-    
-    client = get_qdrant_client()
-    if not client.collection_exists(COLLECTION_NAME):
-        client.create_collection(
-            COLLECTION_NAME, 
-            vectors_config=VectorParams(size=VECTOR_SIZE, distance=Distance.COSINE)
+    try:
+        print("Loading model into memory (FP16)...")
+        model = SentenceTransformer(
+            EMBEDDING_MODEL, 
+            device=device,
+            model_kwargs={"torch_dtype": torch.float16} 
         )
+        
+        client = get_qdrant_client()
+        if not client.collection_exists(COLLECTION_NAME):
+            client.create_collection(
+                COLLECTION_NAME, 
+                vectors_config=VectorParams(size=VECTOR_SIZE, distance=Distance.COSINE)
+            )
 
-    process_text_optimized(model, client)
+        process_text_optimized(model, client)
+        process_images_optimized(model, client)
+        
+        print("\nFinished!")
     
-    process_images_optimized(model, client)
-    
-    print("\nFinished!")
+    finally:
+        if device == 'cuda':
+            del model
+            torch.cuda.empty_cache()
+            print("GPU memory released")
 
 if __name__ == "__main__":
     main()
