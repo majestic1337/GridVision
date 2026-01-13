@@ -1,9 +1,8 @@
 import os
 import json
-import uuid
+from filelock import FileLock
 import torch
 import hashlib
-import fcntl
 import re
 from collections import defaultdict
 from pathlib import Path
@@ -11,7 +10,7 @@ from tqdm import tqdm
 from dotenv import load_dotenv
 
 from qdrant_client import QdrantClient
-from qdrant_client.models import PointStruct, VectorParams, Distance
+from qdrant_client.models import PointStruct, VectorParams, Distance, Filter, FieldCondition, MatchValue, MatchAny
 from sentence_transformers import SentenceTransformer
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
@@ -23,11 +22,12 @@ IMAGE_METADATA = BASE_DIR / "data" / "processed" / "image_summaries.json"
 LOG_FILE = BASE_DIR / "data" / "processed" / "processed_files_log.txt"
 
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
-COLLECTION_NAME = "grid_vision_manuals"
+COLLECTION_NAME = os.getenv("QDRANT_COLLECTION", "gridvision_manuals")
 
-EMBEDDING_MODEL = "BAAI/bge-m3" 
-VECTOR_SIZE = 1024 
-BATCH_SIZE = 16
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "BAAI/bge-m3") 
+VECTOR_SIZE = int(os.getenv("VECTOR_SIZE", "1024")) 
+BATCH_SIZE = int(os.getenv("BATCH_SIZE", "16"))
+MAX_DOC_SIZE = 10_000_000
 
 def get_device():
     if torch.cuda.is_available():
@@ -38,11 +38,11 @@ def get_device():
 def get_qdrant_client():
     client = QdrantClient(url=QDRANT_URL)
     try:
-        client.get_collections()
-        print(f"✓ Connected to Qdrant at {QDRANT_URL}")
+        client. get_collections()
+        print(f"Connected to Qdrant at {QDRANT_URL}")
         return client
-    except Exception as e:
-        raise ConnectionError(f"Failed to connect to Qdrant at {QDRANT_URL}: {e}")
+    except (ConnectionError, TimeoutError) as e:
+        raise ConnectionError(f"Cannot reach Qdrant: {e}")
 
 def load_processed_log():
     if not LOG_FILE.exists():
@@ -51,19 +51,14 @@ def load_processed_log():
         return set(line.strip() for line in f if line.strip())
 
 def mark_as_processed(filenames):
-    with open(LOG_FILE, "a", encoding="utf-8") as f:
-        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
-        try:
-            for name in filenames:
-                f.write(f"{name}\n")
-            f.flush()
-            os.fsync(f.fileno())
-        finally:
-            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+    lock = FileLock(str(LOG_FILE) + ".lock")
+    with lock, open(LOG_FILE, "a", encoding="utf-8") as f:
+        for name in filenames:
+            f.write(f"{name}\n")
 
 def generate_deterministic_id(content, source, page):
-    key = f"{source}|{page}|{content[:100]}"
-    return hashlib.md5(key.encode()).hexdigest()
+    key = f"{source}|{page}|{content.strip()}"
+    return hashlib.md5(key.encode('utf-8', errors='ignore')).hexdigest()
 
 def process_text_optimized(model, client):
     processed_files = load_processed_log()
@@ -97,34 +92,70 @@ def process_text_optimized(model, client):
         except (ValueError, IndexError):
             pass
 
-        full_text = ""
+        page_texts = []
+        page_metadatas = []
+        original_filenames = []
+        current_doc_size = 0
+        skip_doc = False
+
         for fp in file_list:
-            with open(fp, "r", encoding="utf-8") as f:
-                text = f.read()
             try:
                 page_num = fp.stem.split("_page_")[1].split("_")[0]
-                full_text += f"\n\n--- Page {page_num} ---\n\n{text}"
-            except IndexError:
+                with open(fp, "r", encoding="utf-8") as f:
+                    text = f.read()
+
+                if current_doc_size + len(text) > MAX_DOC_SIZE:
+                    print(f"Warning: {source_doc} exceeds size limit ({MAX_DOC_SIZE}), skipping.")
+                    skip_doc = True
+                    break
+                
+                current_doc_size += len(text)
+                page_texts.append(text)
+                page_metadatas.append({
+                    "source": source_doc,
+                    "page": page_num,
+                    "file_path": fp.name
+                })
+                original_filenames.append(fp.name)
+            except Exception as e:
+                print(f"Error reading {fp.name}: {e}")
                 continue
         
-        chunks = splitter.split_text(full_text)
-        
-        for chunk in chunks:
-            # Extract page number approximation from text marker
-            page_match = re.search(r'--- Page (\d+) ---', chunk)
-            page_num = page_match.group(1) if page_match else "N/A"
+        if skip_doc:
+            continue
 
-            all_chunks_data.append({
-                "text": chunk,
-                "filename": f"{source_doc}_processed", 
-                "original_files": [f.name for f in file_list],
-                "payload": {
-                    "type": "text",
-                    "content": chunk,
-                    "source": source_doc,
-                    "page": page_num
-                }
-            })
+        if page_texts:
+            split_docs = splitter.create_documents(page_texts, metadatas=page_metadatas)
+
+            for doc in split_docs:
+                all_chunks_data.append({
+                    "text": doc.page_content,
+                    "filename": f"{source_doc}_processed", 
+                    "original_files": original_filenames,
+                    "payload": {
+                        "type": "text",
+                        "content": doc.page_content,
+                        "source": doc.metadata["source"],
+                        "page": doc.metadata["page"]
+                    }
+                })
+
+    purge_targets = defaultdict(set)
+    for item in all_chunks_data:
+        purge_targets[item["payload"]["source"]].add(item["payload"]["page"])
+
+    print("Cleaning up stale vectors...")
+    for source, pages in purge_targets.items():
+        client.delete(
+            collection_name=COLLECTION_NAME,
+            points_selector=Filter(
+                must=[
+                    FieldCondition(key="source", match=MatchValue(value=source)),
+                    FieldCondition(key="type", match=MatchValue(value="text")),
+                    FieldCondition(key="page", match=MatchAny(any=list(pages))),
+                ]
+            )
+        )
 
     total_chunks = len(all_chunks_data)
     print(f"Starting GPU processing. Total chunks: {total_chunks}")
@@ -133,7 +164,11 @@ def process_text_optimized(model, client):
         batch = all_chunks_data[i : i + BATCH_SIZE]
         texts = [item["text"] for item in batch]
         
-        embeddings = model.encode(texts, batch_size=BATCH_SIZE, show_progress_bar=False)
+        embeddings = model.encode(
+            texts, batch_size=BATCH_SIZE, 
+            show_progress_bar=False,
+            normalize_embeddings=True  
+        )
 
         points = []
         filenames_done = set()
@@ -155,6 +190,25 @@ def process_text_optimized(model, client):
         client.upsert(collection_name=COLLECTION_NAME, points=points)
         mark_as_processed(filenames_done)
 
+def process_single_image(model, item):
+    """Generates PointStruct for a single image item."""
+    text = f"Type: Diagram\nDesc: {item['description']}\nSource: {item['source_doc']}"
+    embedding = model.encode(text)
+    point_id = generate_deterministic_id(
+        item['description'], item['source_doc'], item['page_num']
+    )
+    return PointStruct(
+        id=point_id,
+        vector=embedding.tolist(),
+        payload={
+            "type": "image",
+            "content": item['description'],
+            "source": item['source_doc'],
+            "page": item['page_num'],
+            "image_path": item['image_path']
+        }
+    )
+
 def process_images_optimized(model, client):
     processed = load_processed_log()
     if not IMAGE_METADATA.exists(): return
@@ -173,8 +227,18 @@ def process_images_optimized(model, client):
         batch = new_images[i : i + BATCH_SIZE]
         
         try:
+            img_paths = [x['image_path'] for x in batch]
+            client.delete(
+                collection_name=COLLECTION_NAME,
+                points_selector=Filter(
+                    must=[
+                        FieldCondition(key="type", match=MatchValue(value="image")),
+                        FieldCondition(key="image_path", match=MatchAny(any=img_paths))
+                    ]
+                )
+            )
             texts = [f"Type: Diagram\nDesc: {x['description']}\nSource: {x['source_doc']}" for x in batch]
-            embeddings = model.encode(texts, batch_size=BATCH_SIZE, show_progress_bar=False)
+            embeddings = model.encode(texts, batch_size=BATCH_SIZE, show_progress_bar=False, normalize_embeddings =True)
             
             points = []
             filenames = []
@@ -201,28 +265,10 @@ def process_images_optimized(model, client):
 
         except Exception as e:
             print(f"Error processing image batch {i//BATCH_SIZE}: {e}")
-            # Fallback: process individually
             for item in batch:
                 try:
-                    text = f"Type: Diagram\nDesc: {item['description']}\nSource: {item['source_doc']}"
-                    embedding = model.encode(text)
-                    point_id = generate_deterministic_id(
-                        item['description'], item['source_doc'], item['page_num']
-                    )
-                    client.upsert(
-                        collection_name=COLLECTION_NAME, 
-                        points=[PointStruct(
-                            id=point_id,
-                            vector=embedding.tolist(),
-                            payload={
-                                "type": "image",
-                                "content": item['description'],
-                                "source": item['source_doc'],
-                                "page": item['page_num'],
-                                "image_path": item['image_path']
-                            }
-                        )]
-                    )
+                    point = process_single_image(model, item)
+                    client.upsert(collection_name=COLLECTION_NAME, points=[point])
                     mark_as_processed([item['image_filename']])
                 except Exception as e2:
                     print(f"Failed to process {item['image_filename']}: {e2}")
@@ -251,10 +297,12 @@ def main():
         print("\nFinished!")
     
     finally:
-        if device == 'cuda':
-            del model
-            torch.cuda.empty_cache()
-            print("GPU memory released")
+        try:
+            if 'model' in locals() and device == 'cuda':
+                del model
+                torch.cuda.empty_cache()
+        except Exception: 
+            pass
 
 if __name__ == "__main__":
     main()
