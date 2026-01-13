@@ -3,6 +3,7 @@ import json
 import time
 import re
 import google.generativeai as genai
+from google.api_core import exceptions as google_exceptions
 from PIL import Image
 from pathlib import Path
 from dotenv import load_dotenv
@@ -20,6 +21,8 @@ model = genai.GenerativeModel('gemini-2.0-flash')
 BASE_DIR = Path(__file__).resolve().parent.parent
 IMG_DIR = BASE_DIR / "data" / "processed" / "images"
 OUTPUT_FILE = BASE_DIR / "data" / "processed" / "image_summaries.json"
+
+RATE_LIMIT_DELAY = float(os.getenv('GEMINI_DELAY', '5.0'))
 
 def analyze_image_with_gemini(img_path, max_retries=3):
     """
@@ -43,21 +46,24 @@ def analyze_image_with_gemini(img_path, max_retries=3):
             img = Image.open(img_path)
             response = model.generate_content([prompt, img])
             return response.text.strip()
-        except Exception as e:
-            if "429" in str(e) and attempt < max_retries - 1:
+        except google_exceptions.ResourceExhausted:
+            if attempt < max_retries - 1:
                 wait_time = min(2 ** attempt * 30, 300)
                 print(f"Rate limit hit. Retry {attempt+1}/{max_retries} in {wait_time}s...")
                 time.sleep(wait_time)
             else:
-                print(f"Error analyzing {img_path.name}: {e}")
+                print(f"Error analyzing {img_path.name}: Rate limit quota exceeded.")
                 return None
+        except Exception as e:
+            print(f"Error analyzing {img_path.name}: {e}")
+            return None
     return None
 
 def parse_filename(filename):
-    match = re.match(r'^(.+)_page_(\d+)', filename)
+    match = re.match(r'^(.+?)_page_(\d+)', filename)
     if not match:
-        raise ValueError(f"Filename doesn't match expected pattern: {filename}")
-    return match.group(1), match.group(2)
+        return filename, "N/A"
+    return match. group(1), match.group(2)
 
 def main():
     if not IMG_DIR.exists():
@@ -106,7 +112,7 @@ def main():
             except ValueError as e:
                 print(f"Skipping {img_path.name}: {e}")
         
-        time.sleep(5)
+        time.sleep(RATE_LIMIT_DELAY)
 
     print(f"\nDone! All summaries saved to {OUTPUT_FILE}")
 
