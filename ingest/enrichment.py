@@ -6,7 +6,6 @@ import time
 import logging
 from typing import Dict, List, Optional, Tuple, Any
 from pathlib import Path
-from dataclasses import dataclass
 from dotenv import load_dotenv
 
 import google.generativeai as genai
@@ -17,9 +16,28 @@ load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env")
 
 logger = logging.getLogger("GridVision_Enrichment")
 
+HALLUCINATION_EXACT_NAMES = {"unknown", "component", "n/a", "not visible", ""}
+HALLUCINATION_SUBSTRINGS = ("not visible", "n/a")
+
 RE_HYPHEN_BREAK = re.compile(r'(\w+)-\s*\n\s*(\w+)') 
 RE_WHITESPACE = re.compile(r'\s+')
 RE_INNER_WS = re.compile(r"[ \t]+")
+
+BASE_SCORE = 0.5
+
+TECH_TERM_BOOST_PER_MATCH = 0.1
+TECH_TERM_MAX_BOOST = 0.4
+
+LOW_WORD_COUNT_THRESHOLD = 10
+LOW_WORD_PENALTY = 0.2
+
+LOW_OCR_CONF_THRESHOLD = 0.8
+LOW_OCR_PENALTY = 0.3
+
+ILLEGIBLE_PENALTY = 0.4
+ILLEGIBLE_PATTERNS = ("not legible", "unreadable", "blur", "unknown")
+
+TARGET_TYPES = ("text", "ocr_text", "table_md", "image_caption")
 
 RE_TECH_TERMS = [
     r'\b\d{3}-\d{4}\b',                  # Standard PN (123-4567)
@@ -63,31 +81,32 @@ class TextNormalizer:
 class QualityScorer:
     @staticmethod
     def evaluate(content: str, element_type: str, ocr_conf: float = 1.0) -> Tuple[float, List[str]]:
-        score = 0.5
-        reasons = []
+        score = QualityScorer.BASE_SCORE
+        reasons: List[str] = []
+
         matches = 0
         for pattern in RE_TECH_TERMS:
             matches += len(re.findall(pattern, content))
-        
+
         if matches > 0:
-            boost = min(matches * 0.1, 0.4)
+            boost = min(
+                matches * QualityScorer.TECH_TERM_BOOST_PER_MATCH,
+                QualityScorer.TECH_TERM_MAX_BOOST,
+            )
             score += boost
             reasons.append(f"tech_terms_found (+{boost:.1f})")
 
         word_count = len(content.split())
-        target_types = ("text", "ocr_text", "table_md", "image_caption")
-        
-        if word_count < 10 and element_type in target_types:
-            score -= 0.2
+        if word_count < QualityScorer.LOW_WORD_COUNT_THRESHOLD and element_type in QualityScorer.TARGET_TYPES:
+            score -= QualityScorer.LOW_WORD_PENALTY
             reasons.append(f"low_word_count ({word_count})")
-        
-        if element_type == 'ocr_text' and ocr_conf < 0.8:
-            score -= 0.3
+
+        if element_type == "ocr_text" and ocr_conf < QualityScorer.LOW_OCR_CONF_THRESHOLD:
+            score -= QualityScorer.LOW_OCR_PENALTY
             reasons.append("low_ocr_conf")
 
-        bad_words = ["not legible", "unreadable", "blur", "unknown"]
-        if any(w in content.lower() for w in bad_words):
-            score -= 0.4
+        if any(w in content.lower() for w in QualityScorer.ILLEGIBLE_PATTERNS):
+            score -= QualityScorer.ILLEGIBLE_PENALTY
             reasons.append("illegible_content")
 
         final_score = max(0.0, min(1.0, score))
@@ -108,31 +127,32 @@ class ImageEnricher:
             self.model = genai.GenerativeModel(model_name)
 
     def _clean_json_response(self, text: str) -> str:
-        text = text.strip()
-        if text.startswith("```"):
-            text = text.strip("`")
-            text = text.replace("json\n", "", 1).strip()
+        s = text.strip()
 
-        start = text.find("{")
-        if start == -1:
-            return text
+        if s.startswith("```"):
+            s = re.sub(r"^\s*```(?:json)?\s*\n?", "", s, flags=re.IGNORECASE)
+            s = re.sub(r"\n?\s*```\s*$", "", s)
+            s = s.strip()
+        try:
+            json.loads(s)
+            return s
+        except json.JSONDecodeError:
+            pass
 
-        depth = 0
-        end = None
-        for i in range(start, len(text)):
-            ch = text[i]
-            if ch == "{":
-                depth += 1
-            elif ch == "}":
-                depth -= 1
-                if depth == 0:
-                    end = i
-                    break
+        decoder = json.JSONDecoder()
+        start_candidates = [i for i in (s.find("{"), s.find("[")) if i != -1]
+        if not start_candidates:
+            return s
 
-        if end is None:
-            return text[start:]
+        start = min(start_candidates)
+        tail = s[start:]
 
-        return text[start:end+1]
+        try:
+            _, end = decoder.raw_decode(tail)
+            return tail[:end].strip()
+        except json.JSONDecodeError:
+            return tail.strip()
+
 
 
     def _render_caption_template(self, data: Dict) -> str:
@@ -160,13 +180,12 @@ class ImageEnricher:
 
 
     def _is_useful_data(self, data: Dict) -> bool:
-        """[Fix #3.3] Hallucination Safety Gate"""
-        name = data.get("component_name", "").lower()
-        parts = data.get("part_numbers", [])
-        conns = data.get("connections", [])
-        
-        is_unknown = "unknown" in name or "component" == name.strip()
-        if is_unknown and not parts and not conns:
+        name = str(data.get("component_name", "")).lower().strip()
+        parts = data.get("part_numbers") or []
+        conns = data.get("connections") or []
+
+        is_placeholder = (name in HALLUCINATION_EXACT_NAMES) or any(s in name for s in HALLUCINATION_SUBSTRINGS)
+        if is_placeholder and not parts and not conns:
             return False
         return True
 
@@ -174,15 +193,24 @@ class ImageEnricher:
         if not self.model or not image_path.exists():
             return None, None
 
-        prompt = """
-        You are extracting structured information from a technical manual image.
+        raw_text = self._call_model_with_retry(image_path)
+        if raw_text is None:
+            return None, None
 
+        data = self._parse_and_validate_enrichment(raw_text, image_path)
+        if not data:
+            return None, None
+
+        return self._render_caption_template(data), data
+
+    def _build_image_prompt(self) -> str:
+        return """
+        You are extracting structured information from a technical manual image.
         Return ONLY a valid JSON object.
         - No markdown, no code fences, no commentary, no extra text.
         - The response MUST start with { and end with }.
         - Use double quotes for all keys and string values.
         - If a field is unknown, use "" for strings and [] for lists.
-
         Schema (return exactly these keys):
         {
         "component_name": "",
@@ -191,41 +219,50 @@ class ImageEnricher:
         "connections": [],
         "technical_description": ""
         }
-
         Rules:
         - "component_name": a specific component name if visible (e.g., "Fuel Pump", "K1 Relay"). If not visible, "".
         - "visual_type": pick ONE value from the allowed list.
         - "part_numbers": only part numbers explicitly visible in the image (strings).
         - "connections": only pin/wire/connector IDs explicitly visible (strings).
         - "technical_description": max 2 sentences, factual, based only on visible content. If not enough info, "".
-        """
+        """.strip()
+
+    def _call_model_with_retry(self, image_path: Path) -> Optional[str]:
+        prompt = self._build_image_prompt()
 
         for attempt in range(self.max_retries):
             try:
                 with Image.open(image_path) as img:
                     response = self.model.generate_content([prompt, img])
-                
-                text_resp = self._clean_json_response(response.text.strip())
-                data = self._try_parse_json(text_resp)
-                
-                if not self._is_useful_data(data):
-                    logger.info(f"Skipping low-value caption for {image_path.name}")
-                    return None, None
-                
-                rendered_caption = self._render_caption_template(data)
-                return rendered_caption, data
+                return (response.text or "").strip()
 
-            except json.JSONDecodeError:
-                logger.warning(f"JSON Decode Error on {image_path.name}. Retrying...")
             except google_exceptions.ResourceExhausted:
-                wait = 2 ** attempt * 5
+                wait = self._rate_limit_backoff_seconds(attempt)
                 logger.warning(f"Rate limit. Waiting {wait}s...")
                 time.sleep(wait)
+
             except Exception as e:
                 logger.error(f"Enrichment failed for {image_path.name}: {e}")
                 break
-                
-        return None, None
+
+        return None
+
+    def _rate_limit_backoff_seconds(self, attempt: int) -> int:
+        return (2**attempt) * 5
+
+    def _parse_and_validate_enrichment(self, raw_text: str, image_path: Path) -> Optional[Dict]:
+        try:
+            cleaned = self._clean_json_response(raw_text)
+            data = self._try_parse_json(cleaned)
+        except json.JSONDecodeError:
+            logger.warning(f"JSON Decode Error on {image_path.name}. Skipping.")
+            return None
+
+        if not data or not self._is_useful_data(data):
+            logger.info(f"Skipping low-value caption for {image_path.name}")
+            return None
+
+        return data
 
 if __name__ == "__main__":
     test_str = "The connec-\r\n tion to 130A16 wire is loose."

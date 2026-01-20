@@ -23,10 +23,9 @@ class PipelineFoundation:
             return yaml.safe_load(f)
 
     def _generate_run_id(self) -> str:
-        """Generates a unique Run ID: YYYYMMDD_HHMMSS_{short_hash}"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        unique_hash = hashlib.md5(str(uuid.uuid4()).encode()).hexdigest()[:6]
-        return f"run_{timestamp}_{unique_hash}"
+        suffix = uuid.uuid4().hex[:6]
+        return f"run_{timestamp}_{suffix}"
 
     def setup_directories(self) -> None:
         """Creates necessary directory structure idempotent."""

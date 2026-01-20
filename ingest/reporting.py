@@ -1,11 +1,19 @@
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, List, Tuple, Any
 from datetime import datetime
 from dataclasses import dataclass, field, asdict
 
 logger = logging.getLogger("GridVision_Reporter")
+
+SCORE_BUCKETS: List[Tuple[float, str]] = [
+    (0.3, "0.0-0.3"),
+    (0.5, "0.3-0.5"),
+    (0.7, "0.5-0.7"),
+    (0.9, "0.7-0.9"),
+]
+SCORE_BUCKET_ELSE = "0.9-1.0"
 
 @dataclass
 class QualityStats:
@@ -22,22 +30,29 @@ class QualityStats:
         "0.0-0.3": 0, "0.3-0.5": 0, "0.5-0.7": 0, "0.7-0.9": 0, "0.9-1.0": 0
     })
 
-    def update(self, score: float, chunk_type: str):
+    def update(self, score: float, chunk_type: str) -> None:
         self.total_chunks += 1
-        self.avg_score += (score - self.avg_score) / self.total_chunks
-        
-        if score < self.min_score_threshold: 
-            self.low_quality_cnt += 1
-        
-        if chunk_type not in self.type_dist:
-            self.type_dist[chunk_type] = 0
-        self.type_dist[chunk_type] += 1
-        if score < 0.3: self.score_dist["0.0-0.3"] += 1
-        elif score < 0.5: self.score_dist["0.3-0.5"] += 1
-        elif score < 0.7: self.score_dist["0.5-0.7"] += 1
-        elif score < 0.9: self.score_dist["0.7-0.9"] += 1
-        else: self.score_dist["0.9-1.0"] += 1
+        self._update_average(score)
+        self._update_quality_count(score)
+        self._update_type_distribution(chunk_type)
+        self._update_score_distribution(score)
 
+    def _update_average(self, score: float) -> None:
+        self.avg_score += (score - self.avg_score) / self.total_chunks
+
+    def _update_quality_count(self, score: float) -> None:
+        if score < self.min_score_threshold:
+            self.low_quality_cnt += 1
+
+    def _update_type_distribution(self, chunk_type: str) -> None:
+        self.type_dist[chunk_type] = self.type_dist.get(chunk_type, 0) + 1
+
+    def _update_score_distribution(self, score: float) -> None:
+        for upper, label in SCORE_BUCKETS:
+            if score < upper:
+                self.score_dist[label] += 1
+                return
+        self.score_dist[SCORE_BUCKET_ELSE] += 1
 @dataclass
 class RunStats:
     start_time: str
