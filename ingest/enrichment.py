@@ -81,7 +81,7 @@ class TextNormalizer:
 class QualityScorer:
     @staticmethod
     def evaluate(content: str, element_type: str, ocr_conf: float = 1.0) -> Tuple[float, List[str]]:
-        score = QualityScorer.BASE_SCORE
+        score = BASE_SCORE
         reasons: List[str] = []
 
         matches = 0
@@ -90,23 +90,23 @@ class QualityScorer:
 
         if matches > 0:
             boost = min(
-                matches * QualityScorer.TECH_TERM_BOOST_PER_MATCH,
-                QualityScorer.TECH_TERM_MAX_BOOST,
+                matches * TECH_TERM_BOOST_PER_MATCH,
+                TECH_TERM_MAX_BOOST,
             )
             score += boost
             reasons.append(f"tech_terms_found (+{boost:.1f})")
 
         word_count = len(content.split())
-        if word_count < QualityScorer.LOW_WORD_COUNT_THRESHOLD and element_type in QualityScorer.TARGET_TYPES:
-            score -= QualityScorer.LOW_WORD_PENALTY
+        if word_count < LOW_WORD_COUNT_THRESHOLD and element_type in TARGET_TYPES:
+            score -= LOW_WORD_PENALTY
             reasons.append(f"low_word_count ({word_count})")
 
-        if element_type == "ocr_text" and ocr_conf < QualityScorer.LOW_OCR_CONF_THRESHOLD:
-            score -= QualityScorer.LOW_OCR_PENALTY
+        if element_type == "ocr_text" and ocr_conf < LOW_OCR_CONF_THRESHOLD:
+            score -= LOW_OCR_PENALTY
             reasons.append("low_ocr_conf")
 
-        if any(w in content.lower() for w in QualityScorer.ILLEGIBLE_PATTERNS):
-            score -= QualityScorer.ILLEGIBLE_PENALTY
+        if any(w in content.lower() for w in ILLEGIBLE_PATTERNS):
+            score -= ILLEGIBLE_PENALTY
             reasons.append("illegible_content")
 
         final_score = max(0.0, min(1.0, score))
