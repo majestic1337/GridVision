@@ -1,0 +1,32 @@
+# Ingestion GridVision v2.0 Configuration
+project_name: "GridVision"
+version: "2.0.0"
+
+paths:
+  base_dir: "."
+  raw_data: "data/raw"
+  processed_assets: "data/processed/assets"
+  processed_artifacts: "data/processed/artifacts"
+  logs: "data/logs"
+
+parser:
+  engine: "docling"
+  version_check: ">=1.0.0"
+  ocr_strategy: "auto"  # force / auto / no_ocr
+  table_mode: "markdown"
+
+chunking:
+  base_chunk_size: 512
+  chunk_overlap: 50
+  separators: ["\n\n", "\n", ". ", " "]
+
+quality_gates:
+  min_score: 0.15
+  min_word_count: 10
+  min_ocr_confidence: 0.8
+  min_text_density: 0.4
+
+enrichment:
+  caption_model: "gemini-2.0-flash"
+  timeout: 15
+  max_retries: 3
