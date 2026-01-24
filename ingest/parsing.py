@@ -6,6 +6,8 @@ from typing import List, Dict, Any, Tuple, Optional, Generator, Iterable
 from dataclasses import dataclass
 from collections import defaultdict
 
+from config.constants import HASH_CHUNK_SIZE, PARA_Y_GAP
+
 try:
     import fitz
     PYMUPDF_AVAILABLE = True
@@ -18,8 +20,6 @@ try:
 except ImportError:
     DOCLING_AVAILABLE = False
 
-PARA_Y_GAP = 32.0
-HASH_CHUNK_SIZE = 4096
 
 logger = logging.getLogger("GridVision_Parser")
 
@@ -33,6 +33,143 @@ class ParsedElement:
     page_label: str
     bbox: Optional[List[float]] = None
     metadata: Optional[Dict[str, Any]] = None
+
+
+class ParagraphBuffer:
+    def __init__(
+        self,
+        doc_id: str,
+        page_idx: int,
+        page_no: int,
+        page_label: str,
+        parent_doc: Any,
+        stable_id_factory,
+    ):
+        self.doc_id = doc_id
+        self.page_idx = page_idx
+        self.page_no = page_no
+        self.page_label = page_label
+        self.parent_doc = parent_doc
+        self._stable_id_factory = stable_id_factory
+
+        self._seq_counter = 0
+        self._text_buf: List[str] = []
+        self._raw_items_buf: List[Any] = []
+        self._bbox_buf: List[List[float]] = []
+        self._prev_text_bbox: Optional[List[float]] = None
+
+    def next_seq_id(self) -> int:
+        self._seq_counter += 1
+        return self._seq_counter
+
+    def add_text(
+        self,
+        text: str,
+        raw_item: Any,
+        bbox: Optional[List[float]],
+    ) -> Optional[ParsedElement]:
+        flushed = None
+        if self._should_start_new_paragraph(bbox):
+            flushed = self.flush()
+
+        if text:
+            self._text_buf.append(text)
+            self._raw_items_buf.append(raw_item)
+            if bbox:
+                self._bbox_buf.append(bbox)
+            self._prev_text_bbox = bbox if bbox else self._prev_text_bbox
+
+        return flushed
+
+    def add_single_text(
+        self,
+        text: str,
+        subtype: str,
+        raw_item: Any,
+        bbox: Optional[List[float]],
+    ) -> ParsedElement:
+        seq_id = self.next_seq_id()
+        stable_id = self._stable_id_factory(seq_id, "text")
+
+        meta = {
+            "raw_item": raw_item,
+            "subtype": subtype,
+            "seq_id": seq_id,
+            "raw_table": None,
+            "parent_doc": self.parent_doc,
+            "source": "docling",
+        }
+
+        return ParsedElement(
+            element_id=stable_id,
+            type="text",
+            content=text,
+            page_idx=self.page_idx,
+            page_number=self.page_no,
+            page_label=self.page_label,
+            bbox=bbox,
+            metadata=meta,
+        )
+
+    def flush(self) -> Optional[ParsedElement]:
+        if not self._text_buf:
+            self._reset()
+            return None
+
+        paragraph_text = "\n".join([t for t in self._text_buf if t]).strip()
+        raw_items = self._raw_items_buf.copy()
+        bbox = self._bbox_union(self._bbox_buf)
+        self._reset()
+
+        if not paragraph_text:
+            return None
+
+        seq_id = self.next_seq_id()
+        stable_id = self._stable_id_factory(seq_id, "text")
+
+        meta = {
+            "raw_item": None,
+            "raw_items": raw_items,
+            "subtype": "body",
+            "seq_id": seq_id,
+            "raw_table": None,
+            "parent_doc": self.parent_doc,
+            "source": "docling",
+        }
+
+        return ParsedElement(
+            element_id=stable_id,
+            type="text",
+            content=paragraph_text,
+            page_idx=self.page_idx,
+            page_number=self.page_no,
+            page_label=self.page_label,
+            bbox=bbox,
+            metadata=meta,
+        )
+
+    def _reset(self) -> None:
+        self._text_buf = []
+        self._raw_items_buf = []
+        self._bbox_buf = []
+        self._prev_text_bbox = None
+
+    def _should_start_new_paragraph(self, bbox: Optional[List[float]]) -> bool:
+        if self._prev_text_bbox and bbox and len(self._prev_text_bbox) == 4 and len(bbox) == 4:
+            y_gap = float(bbox[1]) - float(self._prev_text_bbox[3])
+            return y_gap > PARA_Y_GAP
+        return False
+
+    @staticmethod
+    def _bbox_union(bboxes: List[List[float]]) -> Optional[List[float]]:
+        bxs = [b for b in bboxes if b and len(b) == 4]
+        if not bxs:
+            return None
+        left = min(b[0] for b in bxs)
+        top = min(b[1] for b in bxs)
+        right = max(b[2] for b in bxs)
+        bottom = max(b[3] for b in bxs)
+        return [left, top, right, bottom]
 
 
 class DocumentParser:
@@ -183,13 +320,6 @@ class DocumentParser:
         page_idx: int = page_ctx["page_idx"]
         page_label: str = page_ctx["page_label"]
 
-        seq_counter = 0
-
-        text_buf: List[str] = []
-        raw_items_buf: List[Any] = []
-        bbox_buf: List[List[float]] = []
-        prev_text_bbox: Optional[List[float]] = None
-
         def label_to_subtype(it: Any) -> str:
             st = "body"
             if hasattr(it, "label"):
@@ -200,55 +330,19 @@ class DocumentParser:
                     st = "header"
             return st
 
-        def bbox_union(bboxes: List[List[float]]) -> Optional[List[float]]:
-            bxs = [b for b in bboxes if b and len(b) == 4]
-            if not bxs:
-                return None
-            l = min(b[0] for b in bxs)
-            t = min(b[1] for b in bxs)
-            r = max(b[2] for b in bxs)
-            bb = max(b[3] for b in bxs)
-            return [l, t, r, bb]
-
-        def flush_paragraph() -> Optional[ParsedElement]:
-            nonlocal seq_counter, text_buf, raw_items_buf, bbox_buf, prev_text_bbox
-
-            if not text_buf:
-                return None
-
-            paragraph_text = "\n".join([t for t in text_buf if t]).strip()
-            if not paragraph_text:
-                text_buf, raw_items_buf, bbox_buf = [], [], []
-                prev_text_bbox = None
-                return None
-
-            seq_counter += 1
-            stable_id = self._generate_stable_id(doc_id, page_idx, seq_counter, "text")
-
-            meta = {
-                "raw_item": None,
-                "raw_items": raw_items_buf.copy(),
-                "subtype": "body",
-                "seq_id": seq_counter,
-                "raw_table": None,
-                "parent_doc": doc,
-                "source": "docling",
-            }
-
-            el = ParsedElement(
-                element_id=stable_id,
-                type="text",
-                content=paragraph_text,
-                page_idx=page_idx,
-                page_number=page_no,
-                page_label=page_label,
-                bbox=bbox_union(bbox_buf),
-                metadata=meta,
-            )
-
-            text_buf, raw_items_buf, bbox_buf = [], [], []
-            prev_text_bbox = None
-            return el
+        buffer = ParagraphBuffer(
+            doc_id=doc_id,
+            page_idx=page_idx,
+            page_no=page_no,
+            page_label=page_label,
+            parent_doc=doc,
+            stable_id_factory=lambda seq_id, base_type: self._generate_stable_id(
+                doc_id,
+                page_idx,
+                seq_id,
+                base_type,
+            ),
+        )
 
         for item, base_type in page_items:
             bbox = self._get_safe_bbox(item)
@@ -258,64 +352,30 @@ class DocumentParser:
                 txt = (getattr(item, "text", "") or "").strip()
 
                 if subtype != "body":
-                    flushed = flush_paragraph()
-                    if flushed:
+                    flushed = buffer.flush()
+                    if flushed is not None:
                         yield flushed
 
-                    seq_counter += 1
-                    stable_id = self._generate_stable_id(doc_id, page_idx, seq_counter, "text")
-                    meta = {
-                        "raw_item": item,
-                        "subtype": subtype,
-                        "seq_id": seq_counter,
-                        "raw_table": None,
-                        "parent_doc": doc,
-                        "source": "docling",
-                    }
-                    yield ParsedElement(
-                        element_id=stable_id,
-                        type="text",
-                        content=txt,
-                        page_idx=page_idx,
-                        page_number=page_no,
-                        page_label=page_label,
-                        bbox=bbox,
-                        metadata=meta,
-                    )
-                    prev_text_bbox = None
+                    yield buffer.add_single_text(txt, subtype, item, bbox)
                     continue
 
-                new_paragraph = False
-                if prev_text_bbox and bbox and len(prev_text_bbox) == 4 and len(bbox) == 4:
-                    y_gap = float(bbox[1]) - float(prev_text_bbox[3])
-                    if y_gap > PARA_Y_GAP:
-                        new_paragraph = True
-
-                if new_paragraph:
-                    flushed = flush_paragraph()
-                    if flushed:
-                        yield flushed
-
-                if txt:
-                    text_buf.append(txt)
-                    raw_items_buf.append(item)
-                    if bbox:
-                        bbox_buf.append(bbox)
-                    prev_text_bbox = bbox if bbox else prev_text_bbox
+                flushed = buffer.add_text(txt, item, bbox)
+                if flushed is not None:
+                    yield flushed
 
                 continue
 
-            flushed = flush_paragraph()
-            if flushed:
+            flushed = buffer.flush()
+            if flushed is not None:
                 yield flushed
 
             if base_type == "table":
-                seq_counter += 1
-                stable_id = self._generate_stable_id(doc_id, page_idx, seq_counter, "table")
+                seq_id = buffer.next_seq_id()
+                stable_id = self._generate_stable_id(doc_id, page_idx, seq_id, "table")
                 meta = {
                     "raw_item": item,
                     "subtype": "body",
-                    "seq_id": seq_counter,
+                    "seq_id": seq_id,
                     "raw_table": item,
                     "parent_doc": doc,
                     "source": "docling",
@@ -333,12 +393,12 @@ class DocumentParser:
                 continue
 
             if base_type == "image":
-                seq_counter += 1
-                stable_id = self._generate_stable_id(doc_id, page_idx, seq_counter, "image")
+                seq_id = buffer.next_seq_id()
+                stable_id = self._generate_stable_id(doc_id, page_idx, seq_id, "image")
                 meta = {
                     "raw_item": item,
                     "subtype": "body",
-                    "seq_id": seq_counter,
+                    "seq_id": seq_id,
                     "raw_table": None,
                     "parent_doc": doc,
                     "source": "pymupdf"
@@ -357,15 +417,15 @@ class DocumentParser:
                 )
                 continue
 
-        flushed = flush_paragraph()
-        if flushed:
+        flushed = buffer.flush()
+        if flushed is not None:
             yield flushed
 
     def _generate_stable_id(self, doc_id: str, page_idx: int, seq_id: int, base_type: str) -> str:
         return f"{doc_id}_p{page_idx}_{seq_id:02d}_{base_type}"
 
     def _infer_page_no(self, item: Any) -> int:
-        if hasattr(item, "prov") and getattr(item, "prov", None):
+        if hasattr(item, "prov") and getattr(item, "prov", None) and len(item.prov)>0:
             return int(item.prov[0].page_no)
         if isinstance(item, dict) and item.get("kind") == "pymupdf_image":
             return int(item["page_no"])
