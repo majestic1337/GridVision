@@ -8,6 +8,31 @@ from typing import Dict, List, Optional, Tuple, Any
 from pathlib import Path
 from dotenv import load_dotenv
 
+from config.constants import (
+    BASE_SCORE,
+    DEFAULT_GEMINI_MODEL,
+    HALLUCINATION_EXACT_NAMES,
+    HALLUCINATION_SUBSTRINGS,
+    ILLEGIBLE_PATTERNS,
+    ILLEGIBLE_PENALTY,
+    IMAGE_ENRICH_MAX_RETRIES,
+    LOW_OCR_CONF_THRESHOLD,
+    LOW_OCR_PENALTY,
+    LOW_TEXT_DENSITY_PENALTY,
+    LOW_TEXT_DENSITY_THRESHOLD,
+    LOW_WORD_COUNT_THRESHOLD,
+    LOW_WORD_PENALTY,
+    QUALITY_SCORE_DECIMALS,
+    RATE_LIMIT_BACKOFF_BASE_SECONDS,
+    RE_HYPHEN_BREAK,
+    RE_INNER_WS,
+    RE_TECH_TERMS,
+    RE_WHITESPACE,
+    TARGET_TYPES,
+    TECH_TERM_BOOST_PER_MATCH,
+    TECH_TERM_MAX_BOOST,
+)
+
 import google.generativeai as genai
 from google.api_core import exceptions as google_exceptions
 from PIL import Image
@@ -15,38 +40,6 @@ from PIL import Image
 load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env") 
 
 logger = logging.getLogger("GridVision_Enrichment")
-
-HALLUCINATION_EXACT_NAMES = {"unknown", "component", "n/a", "not visible", ""}
-HALLUCINATION_SUBSTRINGS = ("not visible", "n/a")
-
-RE_HYPHEN_BREAK = re.compile(r'(\w+)-\s*\n\s*(\w+)') 
-RE_WHITESPACE = re.compile(r'\s+')
-RE_INNER_WS = re.compile(r"[ \t]+")
-
-BASE_SCORE = 0.5
-
-TECH_TERM_BOOST_PER_MATCH = 0.1
-TECH_TERM_MAX_BOOST = 0.4
-
-LOW_WORD_COUNT_THRESHOLD = 10
-LOW_WORD_PENALTY = 0.2
-
-LOW_OCR_CONF_THRESHOLD = 0.8
-LOW_OCR_PENALTY = 0.3
-
-ILLEGIBLE_PENALTY = 0.4
-ILLEGIBLE_PATTERNS = ("not legible", "unreadable", "blur", "unknown")
-
-TARGET_TYPES = ("text", "ocr_text", "table_md", "image_caption")
-
-RE_TECH_TERMS = [
-    r'\b\d{3}-\d{4}\b',                  # Standard PN (123-4567)
-    r'\b[A-Z]{1,4}-\d+\b',               # Pin IDs (PIN-4, WH-12)
-    r'\bTB\s*-?\s*\d+\b',                # Terminal Blocks (TB-1, TB 1)
-    r'\b\d{2,}[A-Z]\d{1,}\b',            # Wire Codes (130A16 - common in schematics)
-    r'\b[JKP]\d{1,3}\b',                 # Connectors (J1, P2, K16)
-    r'\b(?=[A-Z0-9]{5,}\b)(?=.*[A-Z])(?=.*\d)[A-Z0-9]+\b'
-]
 
 class TextNormalizer:
     @staticmethod
@@ -80,7 +73,22 @@ class TextNormalizer:
 
 class QualityScorer:
     @staticmethod
-    def evaluate(content: str, element_type: str, ocr_conf: float = 1.0) -> Tuple[float, List[str]]:
+    def _text_density(content: str) -> float:
+        if not content:
+            return 0.0
+        alnum_count = sum(1 for ch in content if ch.isalnum())
+        return alnum_count / max(1, len(content))
+
+    @staticmethod
+    def evaluate(
+        content: str,
+        element_type: str,
+        ocr_conf: float = 1.0,
+        *,
+        min_word_count: int = LOW_WORD_COUNT_THRESHOLD,
+        min_ocr_confidence: float = LOW_OCR_CONF_THRESHOLD,
+        min_text_density: float = LOW_TEXT_DENSITY_THRESHOLD,
+    ) -> Tuple[float, List[str]]:
         score = BASE_SCORE
         reasons: List[str] = []
 
@@ -97,25 +105,36 @@ class QualityScorer:
             reasons.append(f"tech_terms_found (+{boost:.1f})")
 
         word_count = len(content.split())
-        if word_count < LOW_WORD_COUNT_THRESHOLD and element_type in TARGET_TYPES:
+        if word_count < min_word_count and element_type in TARGET_TYPES:
             score -= LOW_WORD_PENALTY
             reasons.append(f"low_word_count ({word_count})")
 
-        if element_type == "ocr_text" and ocr_conf < LOW_OCR_CONF_THRESHOLD:
+        if element_type == "ocr_text" and ocr_conf < min_ocr_confidence:
             score -= LOW_OCR_PENALTY
             reasons.append("low_ocr_conf")
+
+        if min_text_density is not None and min_text_density > 0 and element_type in TARGET_TYPES:
+            density = QualityScorer._text_density(content)
+            if density < min_text_density:
+                score -= LOW_TEXT_DENSITY_PENALTY
+                reasons.append(f"low_text_density ({density:.2f})")
 
         if any(w in content.lower() for w in ILLEGIBLE_PATTERNS):
             score -= ILLEGIBLE_PENALTY
             reasons.append("illegible_content")
 
         final_score = max(0.0, min(1.0, score))
-        return round(final_score, 2), reasons
+        return round(final_score, QUALITY_SCORE_DECIMALS), reasons
 
 
 class ImageEnricher:
 
-    def __init__(self, api_key: Optional[str] = None, model_name: str = "gemini-2.0-flash", max_retries: int = 3):
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        model_name: str = DEFAULT_GEMINI_MODEL,
+        max_retries: int = IMAGE_ENRICH_MAX_RETRIES,
+    ):
         self.api_key = api_key or os.getenv("GOOGLE_API_KEY")
         self.max_retries = max_retries
         
@@ -248,7 +267,7 @@ class ImageEnricher:
         return None
 
     def _rate_limit_backoff_seconds(self, attempt: int) -> int:
-        return (2**attempt) * 5
+        return (2**attempt) * RATE_LIMIT_BACKOFF_BASE_SECONDS
 
     def _parse_and_validate_enrichment(self, raw_text: str, image_path: Path) -> Optional[Dict]:
         try:

@@ -81,4 +81,5 @@ if __name__ == "__main__":
         
         logger.info("Foundation stage complete.")
     except Exception as e:
-        print(f"Critical Setup Error: {e}")
+        logging.basicConfig(level=logging.ERROR)
+        logging.getLogger("GridVision_Foundation").exception("Critical Setup Error")

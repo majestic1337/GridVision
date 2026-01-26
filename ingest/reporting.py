@@ -1,26 +1,24 @@
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List, Any
 from datetime import datetime
 from dataclasses import dataclass, field, asdict
 
+from config.constants import (
+    ASSET_VALIDATION_SAMPLE_SIZE,
+    DEFAULT_MIN_SCORE,
+    SCORE_BUCKETS,
+    SCORE_BUCKET_ELSE,
+)
 logger = logging.getLogger("GridVision_Reporter")
-
-SCORE_BUCKETS: List[Tuple[float, str]] = [
-    (0.3, "0.0-0.3"),
-    (0.5, "0.3-0.5"),
-    (0.7, "0.5-0.7"),
-    (0.9, "0.7-0.9"),
-]
-SCORE_BUCKET_ELSE = "0.9-1.0"
 
 @dataclass
 class QualityStats:
     total_chunks: int = 0
     low_quality_cnt: int = 0
     avg_score: float = 0.0
-    min_score_threshold: float = 0.3
+    min_score_threshold: float = DEFAULT_MIN_SCORE
     
     type_dist: Dict[str, int] = field(default_factory=lambda: {
         "text": 0, "image_caption": 0, "table_md": 0, "ocr_text": 0
@@ -64,7 +62,13 @@ class RunStats:
     warnings: List[str] = field(default_factory=list)
 
 class IngestionReporter:
-    def __init__(self, run_id: str, artifact_dir: Path, root_dir: Path, min_score: float = 0.3):
+    def __init__(
+        self,
+        run_id: str,
+        artifact_dir: Path,
+        root_dir: Path,
+        min_score: float = DEFAULT_MIN_SCORE,
+    ):
         self.artifact_dir = artifact_dir
         self.root_dir = root_dir
         
@@ -126,7 +130,7 @@ class IngestionReporter:
             missing_files = 0
             checked_count = 0
             
-            for item in manifest[:20]: 
+            for item in manifest[:ASSET_VALIDATION_SAMPLE_SIZE]:
                 checked_count += 1
                 rel_path = Path(item["file_path"])
                 if rel_path.is_absolute():
