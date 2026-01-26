@@ -3,7 +3,7 @@ import logging
 import hashlib
 import time
 from pathlib import Path
-from typing import List, Dict, Union
+from typing import List, Dict, Optional, Union
 from datetime import datetime
 
 from config.constants import (
@@ -60,7 +60,9 @@ class SparseEncoder:
             return {"indices": [], "values": []}
 
 class IngestionProcessor:
-    def __init__(self, config_path: str = "metadata/ingest_config.yaml"):
+    def __init__(self, config_path: Optional[str] = None):
+        if config_path is None:
+            config_path = os.getenv("GV_INGEST_CONFIG", "metadata/ingest_config.yaml")
         self.foundation = PipelineFoundation(config_path)
         self.config = self.foundation.config
         
@@ -103,8 +105,22 @@ class IngestionProcessor:
         self.chunk_registry = ChunkRegistry()
 
 
-    def process_document(self, filename: str):
-        raw_path = self.foundation.root_dir / self.config["paths"]["raw_data"] / filename
+    def get_logger(self) -> logging.Logger:
+        return self.logger
+
+    def raw_data_dir(self) -> Path:
+        paths = self.config.get("paths", {})
+        raw_root = paths.get("raw_data", "data/raw")
+        return self.foundation.root_dir / raw_root
+
+    def resolve_raw_path(self, filename: Union[str, Path]) -> Path:
+        raw_path = Path(filename)
+        if not raw_path.is_absolute():
+            raw_path = self.raw_data_dir() / raw_path
+        return raw_path
+
+    def process_document(self, filename: Union[str, Path]):
+        raw_path = self.resolve_raw_path(filename)
         if not raw_path.exists():
             self.logger.error(f"File not found: {raw_path}")
             return
