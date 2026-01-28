@@ -2,7 +2,7 @@ import json
 import hashlib
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, Set, Tuple, TYPE_CHECKING
 
 from config.constants import ASSET_ID_HASH_LEN, DEFAULT_ASSET_ZOOM
 
@@ -22,12 +22,90 @@ class ArtifactStore:
         self.artifact_dir = artifact_dir
         self.logger = logger
 
-    def initialize(self) -> None:
+    def initialize(self, reset: bool = False) -> None:
         self.artifact_dir.mkdir(parents=True, exist_ok=True)
-        (self.artifact_dir / "chunks.jsonl").write_text("", encoding="utf-8")
-        (self.artifact_dir / "assets_manifest.json").write_text("[]", encoding="utf-8")
-        (self.artifact_dir / "element_to_chunks.json").write_text("{}", encoding="utf-8")
-        (self.artifact_dir / "page_to_assets.json").write_text("{}", encoding="utf-8")
+
+        chunks_path = self.artifact_dir / "chunks.jsonl"
+        assets_path = self.artifact_dir / "assets_manifest.json"
+        elements_path = self.artifact_dir / "element_to_chunks.json"
+        pages_path = self.artifact_dir / "page_to_assets.json"
+        docs_path = self.artifact_dir / "documents.jsonl"
+
+        if reset:
+            chunks_path.write_text("", encoding="utf-8")
+            assets_path.write_text("[]", encoding="utf-8")
+            elements_path.write_text("{}", encoding="utf-8")
+            pages_path.write_text("{}", encoding="utf-8")
+            docs_path.write_text("", encoding="utf-8")
+            return
+
+        self._ensure_file(chunks_path, "")
+        self._ensure_file(assets_path, "[]")
+        self._ensure_file(elements_path, "{}")
+        self._ensure_file(pages_path, "{}")
+        self._ensure_file(docs_path, "")
+
+    def _ensure_file(self, path: Path, default_text: str) -> None:
+        if not path.exists():
+            path.write_text(default_text, encoding="utf-8")
+
+    def load_ingested_doc_ids(self) -> Set[str]:
+        doc_ids: Set[str] = set()
+        docs_path = self.artifact_dir / "documents.jsonl"
+        if docs_path.exists() and docs_path.stat().st_size > 0:
+            with open(docs_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+                    try:
+                        record = json.loads(line)
+                    except Exception:
+                        self.logger.warning("Skipping malformed documents.jsonl line")
+                        continue
+                    doc_id = record.get("doc_id")
+                    if doc_id:
+                        doc_ids.add(str(doc_id))
+            if doc_ids:
+                return doc_ids
+
+        chunk_path = self.artifact_dir / "chunks.jsonl"
+        doc_records: Dict[str, Dict[str, Any]] = {}
+        if chunk_path.exists() and chunk_path.stat().st_size > 0:
+            with open(chunk_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+                    try:
+                        chunk = json.loads(line)
+                    except Exception:
+                        self.logger.warning("Skipping malformed chunks.jsonl line")
+                        continue
+                    doc_id = chunk.get("doc_id")
+                    if not doc_id:
+                        continue
+                    doc_id = str(doc_id)
+                    if doc_id not in doc_records:
+                        doc_records[doc_id] = {
+                            "doc_id": doc_id,
+                            "doc_slug": chunk.get("doc_slug"),
+                            "title": chunk.get("title"),
+                            "source_uri": chunk.get("source_uri"),
+                            "created_at": chunk.get("created_at"),
+                            "tags": chunk.get("tags"),
+                        }
+                    doc_ids.add(doc_id)
+
+        if doc_records and (not docs_path.exists() or docs_path.stat().st_size == 0):
+            with open(docs_path, "a", encoding="utf-8") as f:
+                for record in doc_records.values():
+                    f.write(json.dumps(record) + "\n")
+
+        return doc_ids
+
+    def append_document_record(self, record: Dict[str, Any]) -> None:
+        path = self.artifact_dir / "documents.jsonl"
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(record) + "\n")
 
     def write_chunks(self, data: List[Dict[str, Any]]) -> None:
         if not data:
