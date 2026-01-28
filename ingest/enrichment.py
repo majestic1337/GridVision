@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from config.constants import (
     BASE_SCORE,
     DEFAULT_GEMINI_MODEL,
+    DEFAULT_IMAGE_MODEL,
     HALLUCINATION_EXACT_NAMES,
     HALLUCINATION_SUBSTRINGS,
     ILLEGIBLE_PATTERNS,
@@ -36,6 +37,12 @@ from config.constants import (
 import google.generativeai as genai
 from google.api_core import exceptions as google_exceptions
 from PIL import Image
+
+try:
+    from sentence_transformers import SentenceTransformer
+    ST_AVAILABLE = True
+except Exception:
+    ST_AVAILABLE = False
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env") 
 
@@ -282,6 +289,46 @@ class ImageEnricher:
             return None
 
         return data
+
+
+class ImageEmbedder:
+    def __init__(
+        self,
+        model_name: str = DEFAULT_IMAGE_MODEL,
+        enabled: bool = False,
+    ):
+        self.model_name = model_name
+        self.model = None
+        if not enabled:
+            logger.info("Image embeddings disabled (enable via GV_IMAGE_EMBEDDINGS=1).")
+            return
+        if not ST_AVAILABLE:
+            logger.warning("sentence-transformers not available; image embeddings disabled.")
+            return
+        try:
+            logger.info("Loading image embedding model: %s", model_name)
+            self.model = SentenceTransformer(model_name, device="cpu")
+        except Exception as exc:
+            logger.warning("Failed to load image embedding model: %s", exc)
+            self.model = None
+
+    @property
+    def active(self) -> bool:
+        return self.model is not None
+
+    def encode(self, image_path: Path) -> Optional[List[float]]:
+        if not self.model or not image_path.exists():
+            return None
+        try:
+            with Image.open(image_path) as img:
+                img = img.convert("RGB")
+                vec = self.model.encode([img], normalize_embeddings=True)
+            if hasattr(vec[0], "tolist"):
+                return vec[0].tolist()
+            return list(vec[0])
+        except Exception as exc:
+            logger.warning("Image embedding failed for %s: %s", image_path, exc)
+            return None
 
 if __name__ == "__main__":
     test_str = "The connec-\r\n tion to 130A16 wire is loose."

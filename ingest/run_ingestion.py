@@ -34,6 +34,16 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Process PDFs even if already ingested (may duplicate entries).",
     )
+    parser.add_argument(
+        "--embed-assets",
+        action="store_true",
+        help="Backfill image embeddings for existing assets_manifest.json (no PDF ingest).",
+    )
+    parser.add_argument(
+        "--embed-overwrite",
+        action="store_true",
+        help="Overwrite existing image embeddings when using --embed-assets.",
+    )
     return parser.parse_args()
 
 
@@ -52,6 +62,11 @@ if __name__ == "__main__":
         skip_existing=not args.reingest,
     )
     logger = processor.get_logger()
+
+    if args.embed_assets:
+        updated = processor.embed_existing_assets(overwrite=args.embed_overwrite)
+        logger.info("[EMBED] Done. Updated %s asset(s).", updated)
+        raise SystemExit(0)
 
     raw_dir = Path(args.raw_dir) if args.raw_dir else processor.raw_data_dir()
     if not raw_dir.exists():
