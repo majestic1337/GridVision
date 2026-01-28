@@ -16,12 +16,14 @@ parser:
   table_mode: "markdown"
 
 chunking:
-  base_chunk_size: 512
-  chunk_overlap: 50
-  separators: ["\n\n", "\n", ". ", " "]
+  base_chunk_size: 1000
+  chunk_overlap: 150
+  min_paragraph_words: 30
+  max_paragraph_chars: 1500
+  separators: ["\n\n", "\n- ", "\n* ", "\n", ". ", " "]
 
 quality_gates:
-  min_score: 0.15
+  min_score: 0.3
   min_word_count: 10
   min_ocr_confidence: 0.8
   min_text_density: 0.4
@@ -30,3 +32,7 @@ enrichment:
   caption_model: "gemini-2.0-flash"
   timeout: 15
   max_retries: 3
+
+image_embeddings:
+  enabled: false
+  model: "clip-ViT-B-32"
