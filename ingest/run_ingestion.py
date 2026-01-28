@@ -24,6 +24,16 @@ def parse_args() -> argparse.Namespace:
         default=os.getenv("GV_INGEST_PATTERN", "*.pdf"),
         help="Glob pattern for input files (default: *.pdf).",
     )
+    parser.add_argument(
+        "--reset",
+        action="store_true",
+        help="Clear existing artifacts before ingest (start fresh).",
+    )
+    parser.add_argument(
+        "--reingest",
+        action="store_true",
+        help="Process PDFs even if already ingested (may duplicate entries).",
+    )
     return parser.parse_args()
 
 
@@ -36,7 +46,11 @@ def _display_path(path: Path, base: Path) -> str:
 
 if __name__ == "__main__":
     args = parse_args()
-    processor = IngestionProcessor(config_path=args.config)
+    processor = IngestionProcessor(
+        config_path=args.config,
+        reset_artifacts=args.reset,
+        skip_existing=not args.reingest,
+    )
     logger = processor.get_logger()
 
     raw_dir = Path(args.raw_dir) if args.raw_dir else processor.raw_data_dir()
