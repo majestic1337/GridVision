@@ -60,7 +60,13 @@ class SparseEncoder:
             return {"indices": [], "values": []}
 
 class IngestionProcessor:
-    def __init__(self, config_path: Optional[str] = None):
+    def __init__(
+        self,
+        config_path: Optional[str] = None,
+        *,
+        reset_artifacts: bool = False,
+        skip_existing: bool = True,
+    ):
         if config_path is None:
             config_path = os.getenv("GV_INGEST_CONFIG", "metadata/ingest_config.yaml")
         self.foundation = PipelineFoundation(config_path)
@@ -75,7 +81,14 @@ class IngestionProcessor:
             artifact_dir=artifact_dir,
             logger=self.logger,
         )
-        self.artifacts.initialize()
+        self.artifacts.initialize(reset=reset_artifacts)
+        self.skip_existing = skip_existing
+        self.ingested_doc_ids = self.artifacts.load_ingested_doc_ids()
+        if self.skip_existing and self.ingested_doc_ids:
+            self.logger.info(
+                "[INGEST] Loaded %s ingested document(s); will skip duplicates.",
+                len(self.ingested_doc_ids),
+            )
 
         self.parser = DocumentParser()
         self.image_enricher = ImageEnricher()
@@ -123,16 +136,25 @@ class IngestionProcessor:
         raw_path = self.resolve_raw_path(filename)
         if not raw_path.exists():
             self.logger.error(f"File not found: {raw_path}")
-            return
+            return False
 
         start_ts = time.monotonic()
 
         doc_hash, doc_slug = self.parser.generate_doc_id(raw_path)
-        doc_title = raw_path.stem.replace("_", " ").strip() or doc_slug
         try:
             source_uri = str(raw_path.relative_to(self.foundation.root_dir))
         except ValueError:
             source_uri = str(raw_path)
+
+        if self.skip_existing and doc_hash in self.ingested_doc_ids:
+            self.logger.info(
+                "[DOC] Skipping already ingested doc_id=%s source=%s",
+                doc_hash,
+                source_uri,
+            )
+            return False
+
+        doc_title = raw_path.stem.replace("_", " ").strip() or doc_slug
         created_at = datetime.utcfromtimestamp(raw_path.stat().st_mtime).replace(microsecond=0).isoformat() + "Z"
         tags = self.config.get("default_tags") or []
         if not isinstance(tags, list):
@@ -400,6 +422,21 @@ class IngestionProcessor:
             asset_total,
             elapsed_s,
         )
+        if doc_hash not in self.ingested_doc_ids:
+            self.artifacts.append_document_record(
+                {
+                    "doc_id": doc_hash,
+                    "doc_slug": doc_slug,
+                    "title": doc_title,
+                    "source_uri": source_uri,
+                    "created_at": created_at,
+                    "tags": tags,
+                    "run_id": self.foundation.run_id,
+                    "ingested_at": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+                }
+            )
+            self.ingested_doc_ids.add(doc_hash)
+        return True
 
     def finalize(self):
         self.reporter.save_report()
