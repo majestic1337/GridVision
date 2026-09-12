@@ -1,0 +1,4292 @@
+{
+  "per_query": [
+    {
+      "id": "q_0001",
+      "query": "What does the manual say about OPERATOR'S, AVIATION UNIT AND INTERMEDIATE MAINTENANCE MANUAL (INCLUDING REPAIR PARTS AND?",
+      "expected_text_chunks": [
+        "7f996ad82b1d01cc971126f117e90b43"
+      ],
+      "expected_text_elements": [
+        "7f996ad82b1d01cc971126f117e90b43"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p1"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_1"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "7f996ad82b1d01cc971126f117e90b43",
+        "50e6071d43af0cf5c05818d9eeae0fe3",
+        "c41a57484dedfdbc5cbfc1943b60fc82",
+        "531aab76b36f363a81a05a6f30b42052",
+        "aa579754636fe1ebca63532b8c4e207d",
+        "7276ea437acf8c504b816d7e1c181134",
+        "0d209f45103a44d3c35fcd5cd614c4eb",
+        "0d3903708ca24f2e9ceced42ad4731f5",
+        "a19272f0703f8b8ea5d8d2bc574347d7",
+        "2e7010294a8340443f38b9b0ddf6863c"
+      ],
+      "retrieved_top_k_elements": [
+        "7f996ad82b1d01cc971126f117e90b43",
+        "50e6071d43af0cf5c05818d9eeae0fe3",
+        "c41a57484dedfdbc5cbfc1943b60fc82",
+        "531aab76b36f363a81a05a6f30b42052",
+        "aa579754636fe1ebca63532b8c4e207d",
+        "7276ea437acf8c504b816d7e1c181134",
+        "0d209f45103a44d3c35fcd5cd614c4eb",
+        "0d3903708ca24f2e9ceced42ad4731f5",
+        "a19272f0703f8b8ea5d8d2bc574347d7",
+        "2e7010294a8340443f38b9b0ddf6863c"
+      ],
+      "retrieved_top_k_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_1",
+        "1c148c42e7e2536cec74bc718fa34a76_7",
+        "1c148c42e7e2536cec74bc718fa34a76_31",
+        "1c148c42e7e2536cec74bc718fa34a76_161",
+        "1c148c42e7e2536cec74bc718fa34a76_150",
+        "d5aabfddcbb8f931926c17b199df5013_23",
+        "1c148c42e7e2536cec74bc718fa34a76_7",
+        "1c148c42e7e2536cec74bc718fa34a76_4",
+        "1c148c42e7e2536cec74bc718fa34a76_159",
+        "d5aabfddcbb8f931926c17b199df5013_15"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0002",
+      "query": "Summarize the guidance on Maximum safe towing speed on an improved surface is 20 mph.",
+      "expected_text_chunks": [
+        "288bbccd3ca125e718110d543b45fa13"
+      ],
+      "expected_text_elements": [
+        "288bbccd3ca125e718110d543b45fa13"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p2"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_2"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "288bbccd3ca125e718110d543b45fa13",
+        "7ba2d48b5d2de3d2a3342c0cb8c6c151",
+        "6bc431a30605a65552718c7b1c27e1ae",
+        "5d20462bebf094af507fd80408c14674",
+        "06bc2d054d9adf538d2a4938a337596f",
+        "e3823fdd8b131f368265523d8877c4b0",
+        "ea4f17e4046410f67abd053f1f60259d",
+        "56fc78cb00e8684e989a8b2436303bff",
+        "af41be9518263ddc21a1f02dd858a499",
+        "08ec83bf69212b88bd5f57bfa25b0917"
+      ],
+      "retrieved_top_k_elements": [
+        "288bbccd3ca125e718110d543b45fa13",
+        "7ba2d48b5d2de3d2a3342c0cb8c6c151",
+        "6bc431a30605a65552718c7b1c27e1ae",
+        "5d20462bebf094af507fd80408c14674",
+        "06bc2d054d9adf538d2a4938a337596f",
+        "e3823fdd8b131f368265523d8877c4b0",
+        "ea4f17e4046410f67abd053f1f60259d",
+        "56fc78cb00e8684e989a8b2436303bff",
+        "af41be9518263ddc21a1f02dd858a499",
+        "08ec83bf69212b88bd5f57bfa25b0917"
+      ],
+      "retrieved_top_k_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_2",
+        "1c148c42e7e2536cec74bc718fa34a76_11",
+        "1c148c42e7e2536cec74bc718fa34a76_8",
+        "1c148c42e7e2536cec74bc718fa34a76_2",
+        "d5aabfddcbb8f931926c17b199df5013_144",
+        "1c148c42e7e2536cec74bc718fa34a76_8",
+        "1c148c42e7e2536cec74bc718fa34a76_104",
+        "d5aabfddcbb8f931926c17b199df5013_144",
+        "d99e6ddd03f39112b96d01466527c172_76",
+        "1c148c42e7e2536cec74bc718fa34a76_25"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0003",
+      "query": "According to the manual, how is If cleaning solvents contact the eyes, nose, or ears, flush them with generous quantities described?",
+      "expected_text_chunks": [
+        "352fcb31516816074e5215db944d2429"
+      ],
+      "expected_text_elements": [
+        "352fcb31516816074e5215db944d2429"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p3"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_3"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "352fcb31516816074e5215db944d2429",
+        "8c8209f28860e85c380bcfac869c661f",
+        "108ea5b61c08def326bf9ccf99418196",
+        "972d9c0de2d2ac1888ad9cfc9024d1cb",
+        "85f2d325435569de4fd8d410bc892eff",
+        "58f8c838cb56587d648a5d245f07d02e",
+        "9a6959019f487e65abfbc4fe0298f41f",
+        "45be11c0782bdff2b7463f676a1e76f2",
+        "ad1515904b2654da0f0b1886d58b5fe7",
+        "e7c8d460bbd968c0a11b3f8204aa1eb5"
+      ],
+      "retrieved_top_k_elements": [
+        "352fcb31516816074e5215db944d2429",
+        "8c8209f28860e85c380bcfac869c661f",
+        "108ea5b61c08def326bf9ccf99418196",
+        "972d9c0de2d2ac1888ad9cfc9024d1cb",
+        "85f2d325435569de4fd8d410bc892eff",
+        "58f8c838cb56587d648a5d245f07d02e",
+        "9a6959019f487e65abfbc4fe0298f41f",
+        "45be11c0782bdff2b7463f676a1e76f2",
+        "ad1515904b2654da0f0b1886d58b5fe7",
+        "e7c8d460bbd968c0a11b3f8204aa1eb5"
+      ],
+      "retrieved_top_k_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_3",
+        "1c148c42e7e2536cec74bc718fa34a76_3",
+        "d5aabfddcbb8f931926c17b199df5013_24",
+        "1c148c42e7e2536cec74bc718fa34a76_67",
+        "1c148c42e7e2536cec74bc718fa34a76_3",
+        "d5aabfddcbb8f931926c17b199df5013_66",
+        "d5aabfddcbb8f931926c17b199df5013_275",
+        "d5aabfddcbb8f931926c17b199df5013_66",
+        "d5aabfddcbb8f931926c17b199df5013_66",
+        "1c148c42e7e2536cec74bc718fa34a76_121"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0004",
+      "query": "From the manual, explain You can help improve this manual.",
+      "expected_text_chunks": [
+        "741772b2ba06f8d03854ece9894efdb9"
+      ],
+      "expected_text_elements": [
+        "741772b2ba06f8d03854ece9894efdb9"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p4"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_4"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "7bfa84315d1e10806cec1e3f49feeee6",
+        "93277b831f1647441a82fa07e3167dbf",
+        "741772b2ba06f8d03854ece9894efdb9",
+        "657b3fcb8c31518fe0e10ff1661daed6",
+        "51b29ce7c843b42629d1d74bec08cfda",
+        "b3b68488074e348780d0e77a7549d9d1",
+        "750367ee04775671ae658065063fa48a",
+        "1fe2173cc7956392355cc213bc2a399d",
+        "b4bd170529031de1c17c2e939f10ef3f",
+        "208782041b835a213c45b567f02c78aa"
+      ],
+      "retrieved_top_k_elements": [
+        "7bfa84315d1e10806cec1e3f49feeee6",
+        "93277b831f1647441a82fa07e3167dbf",
+        "741772b2ba06f8d03854ece9894efdb9",
+        "657b3fcb8c31518fe0e10ff1661daed6",
+        "51b29ce7c843b42629d1d74bec08cfda",
+        "b3b68488074e348780d0e77a7549d9d1",
+        "750367ee04775671ae658065063fa48a",
+        "1fe2173cc7956392355cc213bc2a399d",
+        "b4bd170529031de1c17c2e939f10ef3f",
+        "208782041b835a213c45b567f02c78aa"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_25",
+        "d5aabfddcbb8f931926c17b199df5013_25",
+        "1c148c42e7e2536cec74bc718fa34a76_4",
+        "1c148c42e7e2536cec74bc718fa34a76_29",
+        "d5aabfddcbb8f931926c17b199df5013_15",
+        "d5aabfddcbb8f931926c17b199df5013_229",
+        "d5aabfddcbb8f931926c17b199df5013_25",
+        "1c148c42e7e2536cec74bc718fa34a76_116",
+        "d5aabfddcbb8f931926c17b199df5013_23",
+        "1c148c42e7e2536cec74bc718fa34a76_43"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.3333333333333333
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.3333333333333333
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.3333333333333333
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.3333333333333333
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.3333333333333333
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.3333333333333333
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.3333333333333333
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.3333333333333333
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.3333333333333333
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0005",
+      "query": "What details are given for 1-2. Maintenance Forms, Records, and Reports . Department of the Army forms and?",
+      "expected_text_chunks": [
+        "0d209f45103a44d3c35fcd5cd614c4eb"
+      ],
+      "expected_text_elements": [
+        "0d209f45103a44d3c35fcd5cd614c4eb"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p7"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_7"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "70e280c7a950a227e40058ecaf7a9244",
+        "0d209f45103a44d3c35fcd5cd614c4eb",
+        "57f5338207c2a9e509b5cc550344e3d9",
+        "22b30d8bf0681fdac2ce5e3ba56e6e6e",
+        "0c3ac4ae8684a41c491c5a17e751f053",
+        "93699999a48f20e8e40e7bf07bd1f452",
+        "2ad9cf0570d1c10edc02edbf96b7106f",
+        "9b1cd7b870b35b9005f0331a0990811b",
+        "83c5468c68f64f67d23d0d852be6f5de",
+        "2e7010294a8340443f38b9b0ddf6863c"
+      ],
+      "retrieved_top_k_elements": [
+        "70e280c7a950a227e40058ecaf7a9244",
+        "0d209f45103a44d3c35fcd5cd614c4eb",
+        "57f5338207c2a9e509b5cc550344e3d9",
+        "22b30d8bf0681fdac2ce5e3ba56e6e6e",
+        "0c3ac4ae8684a41c491c5a17e751f053",
+        "93699999a48f20e8e40e7bf07bd1f452",
+        "2ad9cf0570d1c10edc02edbf96b7106f",
+        "9b1cd7b870b35b9005f0331a0990811b",
+        "83c5468c68f64f67d23d0d852be6f5de",
+        "2e7010294a8340443f38b9b0ddf6863c"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_25",
+        "1c148c42e7e2536cec74bc718fa34a76_7",
+        "d5aabfddcbb8f931926c17b199df5013_25",
+        "d5aabfddcbb8f931926c17b199df5013_30",
+        "d5aabfddcbb8f931926c17b199df5013_30",
+        "d5aabfddcbb8f931926c17b199df5013_31",
+        "d5aabfddcbb8f931926c17b199df5013_30",
+        "d5aabfddcbb8f931926c17b199df5013_30",
+        "d5aabfddcbb8f931926c17b199df5013_1",
+        "d5aabfddcbb8f931926c17b199df5013_15"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0006",
+      "query": "What does the manual say about 1-12. Housing. Two hinged doors on each side and one on the rear of the cabinet permit?",
+      "expected_text_chunks": [
+        "255900657d31400d08c344e23897e5c2"
+      ],
+      "expected_text_elements": [
+        "255900657d31400d08c344e23897e5c2"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p8"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_8"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "255900657d31400d08c344e23897e5c2",
+        "40cc6f2812de48af70c68aae1960b3aa",
+        "1f73e714d0ce08f773512d87e8060ff7",
+        "0141c6207fdd393f197b7b2afb5abf2b",
+        "653d41d1aea13e8f720dbf164db7d8b7",
+        "780756fd85cd551c232126194b07eec1",
+        "40fcfecfbab39b5f2772c7966ae444da",
+        "70e280c7a950a227e40058ecaf7a9244",
+        "fb22360695fe78ea25704b9fffcab000",
+        "b4bd170529031de1c17c2e939f10ef3f"
+      ],
+      "retrieved_top_k_elements": [
+        "255900657d31400d08c344e23897e5c2",
+        "40cc6f2812de48af70c68aae1960b3aa",
+        "1f73e714d0ce08f773512d87e8060ff7",
+        "0141c6207fdd393f197b7b2afb5abf2b",
+        "653d41d1aea13e8f720dbf164db7d8b7",
+        "780756fd85cd551c232126194b07eec1",
+        "40fcfecfbab39b5f2772c7966ae444da",
+        "70e280c7a950a227e40058ecaf7a9244",
+        "fb22360695fe78ea25704b9fffcab000",
+        "b4bd170529031de1c17c2e939f10ef3f"
+      ],
+      "retrieved_top_k_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_8",
+        "d5aabfddcbb8f931926c17b199df5013_229",
+        "d5aabfddcbb8f931926c17b199df5013_101",
+        "d5aabfddcbb8f931926c17b199df5013_229",
+        "d5aabfddcbb8f931926c17b199df5013_45",
+        "1c148c42e7e2536cec74bc718fa34a76_168",
+        "d5aabfddcbb8f931926c17b199df5013_96",
+        "d5aabfddcbb8f931926c17b199df5013_25",
+        "d5aabfddcbb8f931926c17b199df5013_89",
+        "d5aabfddcbb8f931926c17b199df5013_23"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0007",
+      "query": "Summarize the guidance on Figure 1-2. Test Stand Hydraulic System Electric Motor Drive, Type D-6A Major Internal.",
+      "expected_text_chunks": [
+        "bf8c899f3b52f0bfc7f8e8cda6e59b4e"
+      ],
+      "expected_text_elements": [
+        "bf8c899f3b52f0bfc7f8e8cda6e59b4e"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p10"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_10"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "bf8c899f3b52f0bfc7f8e8cda6e59b4e",
+        "f7769b286d545684f67a80065fb4f6e6",
+        "03d8f6ce41afa09268b93459cc14d11b",
+        "6276c09495788a0e8a86a7e433207461",
+        "105bfcd1d269091dd6a1323f219157c0",
+        "26cf331e3518be8c3aedad6fa5362921",
+        "7b9cafe61619cf962ebc69e38c9e26cf",
+        "f52941390b2e2bfdc2de630da7a28b1f",
+        "e8816170cec0c92b51aa9b2debc006e0",
+        "dfc6f8607d91f605e423f418643728ef"
+      ],
+      "retrieved_top_k_elements": [
+        "bf8c899f3b52f0bfc7f8e8cda6e59b4e",
+        "f7769b286d545684f67a80065fb4f6e6",
+        "03d8f6ce41afa09268b93459cc14d11b",
+        "6276c09495788a0e8a86a7e433207461",
+        "105bfcd1d269091dd6a1323f219157c0",
+        "26cf331e3518be8c3aedad6fa5362921",
+        "7b9cafe61619cf962ebc69e38c9e26cf",
+        "f52941390b2e2bfdc2de630da7a28b1f",
+        "e8816170cec0c92b51aa9b2debc006e0",
+        "dfc6f8607d91f605e423f418643728ef"
+      ],
+      "retrieved_top_k_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_10",
+        "1c148c42e7e2536cec74bc718fa34a76_9",
+        "1c148c42e7e2536cec74bc718fa34a76_5",
+        "1c148c42e7e2536cec74bc718fa34a76_7",
+        "1c148c42e7e2536cec74bc718fa34a76_5",
+        "1c148c42e7e2536cec74bc718fa34a76_221",
+        "1c148c42e7e2536cec74bc718fa34a76_1",
+        "1c148c42e7e2536cec74bc718fa34a76_220",
+        "1c148c42e7e2536cec74bc718fa34a76_8",
+        "1c148c42e7e2536cec74bc718fa34a76_221"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0008",
+      "query": "According to the manual, how is 1-19. Low Pressure Filter. A low pressure filter (Figure 1-2) is incorporated in the described?",
+      "expected_text_chunks": [
+        "00d9cec6a3ac95c213be948e4aec4725"
+      ],
+      "expected_text_elements": [
+        "00d9cec6a3ac95c213be948e4aec4725"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p12"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_12"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "00d9cec6a3ac95c213be948e4aec4725",
+        "f596fdabdbe399abaf87bc3f1f2e1960",
+        "b7ba9957a5981d93614561c3f89536f6",
+        "6d0449e675a90e9b1601679aceccba1e",
+        "5a4f08616057c5a03403e83407f61730",
+        "5edb9b9b176fd1d658693d5c55c16f5e",
+        "cdb196e6b8e2ef5d4fba61fd281a5e34",
+        "94cfdf1ebba79cea121a4e91d35eb4a2",
+        "9f7a186d9d0d0ec8bddf9c4a47bef5c2",
+        "73f3b637ec98af633a14df597b873546"
+      ],
+      "retrieved_top_k_elements": [
+        "00d9cec6a3ac95c213be948e4aec4725",
+        "f596fdabdbe399abaf87bc3f1f2e1960",
+        "b7ba9957a5981d93614561c3f89536f6",
+        "6d0449e675a90e9b1601679aceccba1e",
+        "5a4f08616057c5a03403e83407f61730",
+        "5edb9b9b176fd1d658693d5c55c16f5e",
+        "cdb196e6b8e2ef5d4fba61fd281a5e34",
+        "94cfdf1ebba79cea121a4e91d35eb4a2",
+        "9f7a186d9d0d0ec8bddf9c4a47bef5c2",
+        "73f3b637ec98af633a14df597b873546"
+      ],
+      "retrieved_top_k_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_12",
+        "1c148c42e7e2536cec74bc718fa34a76_12",
+        "1c148c42e7e2536cec74bc718fa34a76_144",
+        "1c148c42e7e2536cec74bc718fa34a76_144",
+        "1c148c42e7e2536cec74bc718fa34a76_120",
+        "1c148c42e7e2536cec74bc718fa34a76_230",
+        "1c148c42e7e2536cec74bc718fa34a76_17",
+        "1c148c42e7e2536cec74bc718fa34a76_228",
+        "1c148c42e7e2536cec74bc718fa34a76_144",
+        "1c148c42e7e2536cec74bc718fa34a76_142"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0009",
+      "query": "From the manual, explain SET 160'F OTS 5 101 105 TEMP FLUID 1M 2 101 HM X2 S1 S2 101 102 103 IMOL STOPSTART 101 NO.",
+      "expected_text_chunks": [
+        "bc3d102d1398224f8ff6fccd81ee10e4"
+      ],
+      "expected_text_elements": [
+        "bc3d102d1398224f8ff6fccd81ee10e4"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p14"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_14"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "bc3d102d1398224f8ff6fccd81ee10e4",
+        "dfb86b9d921a796fec2c39192f490d6e",
+        "0240ef3eb1fcc7099e6421dbfb19e85a",
+        "26cf331e3518be8c3aedad6fa5362921",
+        "d8497f8ca9c644e92f0e6642148c8b50",
+        "ee3ef81c0724797e661b41be44d5621e",
+        "8b27af82348b97ee880e8a6bba8a6c9b",
+        "0feff4c5ee7f985c12b847f447153a6f",
+        "1c79593b3d5d9d49174e84292df8e3c1",
+        "dd7bb9ebc2c5e3228ef0bdb4b35b482d"
+      ],
+      "retrieved_top_k_elements": [
+        "bc3d102d1398224f8ff6fccd81ee10e4",
+        "dfb86b9d921a796fec2c39192f490d6e",
+        "0240ef3eb1fcc7099e6421dbfb19e85a",
+        "26cf331e3518be8c3aedad6fa5362921",
+        "d8497f8ca9c644e92f0e6642148c8b50",
+        "ee3ef81c0724797e661b41be44d5621e",
+        "8b27af82348b97ee880e8a6bba8a6c9b",
+        "0feff4c5ee7f985c12b847f447153a6f",
+        "1c79593b3d5d9d49174e84292df8e3c1",
+        "dd7bb9ebc2c5e3228ef0bdb4b35b482d"
+      ],
+      "retrieved_top_k_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_14",
+        "1c148c42e7e2536cec74bc718fa34a76_13",
+        "1c148c42e7e2536cec74bc718fa34a76_15",
+        "1c148c42e7e2536cec74bc718fa34a76_221",
+        "1c148c42e7e2536cec74bc718fa34a76_14",
+        "1c148c42e7e2536cec74bc718fa34a76_197",
+        "d99e6ddd03f39112b96d01466527c172_113",
+        "1c148c42e7e2536cec74bc718fa34a76_18",
+        "1c148c42e7e2536cec74bc718fa34a76_17",
+        "1c148c42e7e2536cec74bc718fa34a76_197"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0010",
+      "query": "What details are given for 2027 CV2 CASE_FKLL -20+250 SET160F G3 SLO TEMP GAGE OUTLET SET40PSI△P 3/4 HPOS FCV-2 区 12?",
+      "expected_text_chunks": [
+        "0240ef3eb1fcc7099e6421dbfb19e85a"
+      ],
+      "expected_text_elements": [
+        "0240ef3eb1fcc7099e6421dbfb19e85a"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p15"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_15"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "0240ef3eb1fcc7099e6421dbfb19e85a",
+        "0e5e3ed311839037788c17ed4a78c600",
+        "0665d73754691f41d50e67865076b999",
+        "ee3ef81c0724797e661b41be44d5621e",
+        "14fdb00119daf7450827048e664ddbec",
+        "6adc2fde56ebf7bf32ca5a762306a0dc",
+        "66ce6f6426071ace27ca792c864b768f",
+        "b11e118c12f597a09cd2c2f1bd703bd9",
+        "1c9361d0c39ac85a40b6015cc884f88e",
+        "f9fda93194f80ea84255f088882c7f93"
+      ],
+      "retrieved_top_k_elements": [
+        "0240ef3eb1fcc7099e6421dbfb19e85a",
+        "0e5e3ed311839037788c17ed4a78c600",
+        "0665d73754691f41d50e67865076b999",
+        "ee3ef81c0724797e661b41be44d5621e",
+        "14fdb00119daf7450827048e664ddbec",
+        "6adc2fde56ebf7bf32ca5a762306a0dc",
+        "66ce6f6426071ace27ca792c864b768f",
+        "b11e118c12f597a09cd2c2f1bd703bd9",
+        "1c9361d0c39ac85a40b6015cc884f88e",
+        "f9fda93194f80ea84255f088882c7f93"
+      ],
+      "retrieved_top_k_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_15",
+        "1c148c42e7e2536cec74bc718fa34a76_15",
+        "1c148c42e7e2536cec74bc718fa34a76_185",
+        "1c148c42e7e2536cec74bc718fa34a76_197",
+        "1c148c42e7e2536cec74bc718fa34a76_186",
+        "1c148c42e7e2536cec74bc718fa34a76_15",
+        "1c148c42e7e2536cec74bc718fa34a76_143",
+        "d5aabfddcbb8f931926c17b199df5013_176",
+        "d5aabfddcbb8f931926c17b199df5013_317",
+        "1c148c42e7e2536cec74bc718fa34a76_24"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0011",
+      "query": "Summarize the table for 2-1 SECTION I Description and Use of Controls and Instruments.",
+      "expected_text_chunks": [
+        "0d3903708ca24f2e9ceced42ad4731f5"
+      ],
+      "expected_text_elements": [
+        "0d3903708ca24f2e9ceced42ad4731f5"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p4"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_4"
+      ],
+      "expected_assets": [
+        "asset_157164291cc0"
+      ],
+      "retrieved_top_k_chunks": [
+        "0a9c128f4f5332d28b4ea8bd82a9def7",
+        "d926949260bbbfde9c2190763645fe0e",
+        "3e5e89440c34cf5c65c5b3be1cecaeda",
+        "0b1705a542481499c637908738dd9ef8",
+        "0d3903708ca24f2e9ceced42ad4731f5",
+        "34ec2df885336d567a0c4a79f750de5a",
+        "77f1523706d41d803e1a7d5b2d738441",
+        "c86a1a6a59b3df4387c73f8b3fbf0c35",
+        "48e2a05cfcf1da430c9062d2139505e9",
+        "3f5dd933a6c986b283b7f8248a1d2843"
+      ],
+      "retrieved_top_k_elements": [
+        "0a9c128f4f5332d28b4ea8bd82a9def7",
+        "d926949260bbbfde9c2190763645fe0e",
+        "3e5e89440c34cf5c65c5b3be1cecaeda",
+        "0b1705a542481499c637908738dd9ef8",
+        "0d3903708ca24f2e9ceced42ad4731f5",
+        "34ec2df885336d567a0c4a79f750de5a",
+        "77f1523706d41d803e1a7d5b2d738441",
+        "c86a1a6a59b3df4387c73f8b3fbf0c35",
+        "48e2a05cfcf1da430c9062d2139505e9",
+        "3f5dd933a6c986b283b7f8248a1d2843"
+      ],
+      "retrieved_top_k_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_20",
+        "1c148c42e7e2536cec74bc718fa34a76_18",
+        "1c148c42e7e2536cec74bc718fa34a76_21",
+        "1c148c42e7e2536cec74bc718fa34a76_20",
+        "1c148c42e7e2536cec74bc718fa34a76_4",
+        "1c148c42e7e2536cec74bc718fa34a76_17",
+        "1c148c42e7e2536cec74bc718fa34a76_11",
+        "1c148c42e7e2536cec74bc718fa34a76_17",
+        "1c148c42e7e2536cec74bc718fa34a76_21",
+        "1c148c42e7e2536cec74bc718fa34a76_233"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.2
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.2
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.2
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.2
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.2
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.2
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0012",
+      "query": "From the table on page 5, what are the key entries for Hydraulic System Test Stand Electric Motor Driven Type D-6A 1-3?",
+      "expected_text_chunks": [
+        "03d8f6ce41afa09268b93459cc14d11b"
+      ],
+      "expected_text_elements": [
+        "03d8f6ce41afa09268b93459cc14d11b"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p5"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_5"
+      ],
+      "expected_assets": [
+        "asset_8ac74fe57889"
+      ],
+      "retrieved_top_k_chunks": [
+        "bf8c899f3b52f0bfc7f8e8cda6e59b4e",
+        "03d8f6ce41afa09268b93459cc14d11b",
+        "f7769b286d545684f67a80065fb4f6e6",
+        "6276c09495788a0e8a86a7e433207461",
+        "105bfcd1d269091dd6a1323f219157c0",
+        "26cf331e3518be8c3aedad6fa5362921",
+        "7b9cafe61619cf962ebc69e38c9e26cf",
+        "f52941390b2e2bfdc2de630da7a28b1f",
+        "dfc6f8607d91f605e423f418643728ef",
+        "6adc2fde56ebf7bf32ca5a762306a0dc"
+      ],
+      "retrieved_top_k_elements": [
+        "bf8c899f3b52f0bfc7f8e8cda6e59b4e",
+        "03d8f6ce41afa09268b93459cc14d11b",
+        "f7769b286d545684f67a80065fb4f6e6",
+        "6276c09495788a0e8a86a7e433207461",
+        "105bfcd1d269091dd6a1323f219157c0",
+        "26cf331e3518be8c3aedad6fa5362921",
+        "7b9cafe61619cf962ebc69e38c9e26cf",
+        "f52941390b2e2bfdc2de630da7a28b1f",
+        "dfc6f8607d91f605e423f418643728ef",
+        "6adc2fde56ebf7bf32ca5a762306a0dc"
+      ],
+      "retrieved_top_k_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_10",
+        "1c148c42e7e2536cec74bc718fa34a76_5",
+        "1c148c42e7e2536cec74bc718fa34a76_9",
+        "1c148c42e7e2536cec74bc718fa34a76_7",
+        "1c148c42e7e2536cec74bc718fa34a76_5",
+        "1c148c42e7e2536cec74bc718fa34a76_221",
+        "1c148c42e7e2536cec74bc718fa34a76_1",
+        "1c148c42e7e2536cec74bc718fa34a76_220",
+        "1c148c42e7e2536cec74bc718fa34a76_221",
+        "1c148c42e7e2536cec74bc718fa34a76_15"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0013",
+      "query": "What does the table on page 11 show about Tires - 6 00/6 90-9 60 psi -40 F -40?",
+      "expected_text_chunks": [
+        "32072ffa6a9f956c20555dc764e83da9"
+      ],
+      "expected_text_elements": [
+        "32072ffa6a9f956c20555dc764e83da9"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p11"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_11"
+      ],
+      "expected_assets": [
+        "asset_f1029e0334cf"
+      ],
+      "retrieved_top_k_chunks": [
+        "32072ffa6a9f956c20555dc764e83da9",
+        "c8885265b11f21587e66051a0a6e491f",
+        "421bff95a477837611d597d8fe038a92",
+        "395087633822f8a0b8c17088760fe5c3",
+        "6b7c024f1e22d713a7438b817d2de36a",
+        "4737f20f229e5bd9663d7673ddba97b5",
+        "7db86ab4359b2537a6bc652a9f608172",
+        "ebfb236088691f9a331960354224c686",
+        "ee3ef81c0724797e661b41be44d5621e",
+        "8c7ec8ad3588841365e7516998ee13db"
+      ],
+      "retrieved_top_k_elements": [
+        "32072ffa6a9f956c20555dc764e83da9",
+        "c8885265b11f21587e66051a0a6e491f",
+        "421bff95a477837611d597d8fe038a92",
+        "395087633822f8a0b8c17088760fe5c3",
+        "6b7c024f1e22d713a7438b817d2de36a",
+        "4737f20f229e5bd9663d7673ddba97b5",
+        "7db86ab4359b2537a6bc652a9f608172",
+        "ebfb236088691f9a331960354224c686",
+        "ee3ef81c0724797e661b41be44d5621e",
+        "8c7ec8ad3588841365e7516998ee13db"
+      ],
+      "retrieved_top_k_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_11",
+        "1c148c42e7e2536cec74bc718fa34a76_64",
+        "1c148c42e7e2536cec74bc718fa34a76_78",
+        "1c148c42e7e2536cec74bc718fa34a76_77",
+        "1c148c42e7e2536cec74bc718fa34a76_30",
+        "1c148c42e7e2536cec74bc718fa34a76_35",
+        "1c148c42e7e2536cec74bc718fa34a76_79",
+        "1c148c42e7e2536cec74bc718fa34a76_231",
+        "1c148c42e7e2536cec74bc718fa34a76_197",
+        "1c148c42e7e2536cec74bc718fa34a76_230"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0014",
+      "query": "Which figure shows Schematic for . Connects to: AN-6, TB-1, L1, L2, L3, GND, STUD, LO, CO, C1, C2, TB-2,?",
+      "expected_text_chunks": [
+        "c84b025f36bf3ba51f4fb899c458ccf8"
+      ],
+      "expected_text_elements": [
+        "c84b025f36bf3ba51f4fb899c458ccf8"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p13"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_13"
+      ],
+      "expected_assets": [
+        "asset_9abd500847a2"
+      ],
+      "retrieved_top_k_chunks": [
+        "c84b025f36bf3ba51f4fb899c458ccf8",
+        "d8497f8ca9c644e92f0e6642148c8b50",
+        "98b22212bd79c1ed67df43c24ea40a1a",
+        "0fb43b1ceee9f1e39d0848bb8da5fca1",
+        "084f1eb1fce6ad995e3245dbb34fc578",
+        "79b48e99c1b3183f348723e8716a994b",
+        "e24d3cdbf7d7a5e2557bc12024d6e98b",
+        "7e5f10ce8c2ac1115f40c69b4fd4beb7",
+        "02bcb79c00985699f8fa4e932c3157ec",
+        "0d34ecb7ba062bba50c92aedf177e60e"
+      ],
+      "retrieved_top_k_elements": [
+        "c84b025f36bf3ba51f4fb899c458ccf8",
+        "d8497f8ca9c644e92f0e6642148c8b50",
+        "98b22212bd79c1ed67df43c24ea40a1a",
+        "0fb43b1ceee9f1e39d0848bb8da5fca1",
+        "084f1eb1fce6ad995e3245dbb34fc578",
+        "79b48e99c1b3183f348723e8716a994b",
+        "e24d3cdbf7d7a5e2557bc12024d6e98b",
+        "7e5f10ce8c2ac1115f40c69b4fd4beb7",
+        "02bcb79c00985699f8fa4e932c3157ec",
+        "0d34ecb7ba062bba50c92aedf177e60e"
+      ],
+      "retrieved_top_k_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_13",
+        "1c148c42e7e2536cec74bc718fa34a76_14",
+        "d5aabfddcbb8f931926c17b199df5013_214",
+        "1c148c42e7e2536cec74bc718fa34a76_181",
+        "d5aabfddcbb8f931926c17b199df5013_213",
+        "d5aabfddcbb8f931926c17b199df5013_123",
+        "d5aabfddcbb8f931926c17b199df5013_213",
+        "1c148c42e7e2536cec74bc718fa34a76_14",
+        "d5aabfddcbb8f931926c17b199df5013_214",
+        "1c148c42e7e2536cec74bc718fa34a76_13"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0015",
+      "query": "What does the figure on page 14 illustrate?",
+      "expected_text_chunks": [
+        "d8497f8ca9c644e92f0e6642148c8b50"
+      ],
+      "expected_text_elements": [
+        "d8497f8ca9c644e92f0e6642148c8b50"
+      ],
+      "expected_pages": [
+        "GOVPUB-D101-PURL-LPS45154#p14"
+      ],
+      "expected_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_14"
+      ],
+      "expected_assets": [
+        "asset_2206e2189b43"
+      ],
+      "retrieved_top_k_chunks": [
+        "df82f05dcd6a95584b6ae5b303eca9d0",
+        "f507aa9f527670231c0bb3aa2f24e1e4",
+        "e5f254a73ae146201772e3bd85b5b4fa",
+        "6875600e293ee571c98dab0bff73fc96",
+        "f55e5ea785242875ad2a5f4abd6482ab",
+        "8f8e07c7c77d8523920f77019740d6ce",
+        "cd402616ffe5be9774e007538b0e9b34",
+        "bc2089210de04a5de47a386d83d5a71f",
+        "a4c19655a28c3e294e001439831af4a7",
+        "640d34c2ad1ba73c00176475f372e73f"
+      ],
+      "retrieved_top_k_elements": [
+        "df82f05dcd6a95584b6ae5b303eca9d0",
+        "f507aa9f527670231c0bb3aa2f24e1e4",
+        "e5f254a73ae146201772e3bd85b5b4fa",
+        "6875600e293ee571c98dab0bff73fc96",
+        "f55e5ea785242875ad2a5f4abd6482ab",
+        "8f8e07c7c77d8523920f77019740d6ce",
+        "cd402616ffe5be9774e007538b0e9b34",
+        "bc2089210de04a5de47a386d83d5a71f",
+        "a4c19655a28c3e294e001439831af4a7",
+        "640d34c2ad1ba73c00176475f372e73f"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_71",
+        "d5aabfddcbb8f931926c17b199df5013_252",
+        "d99e6ddd03f39112b96d01466527c172_24",
+        "d5aabfddcbb8f931926c17b199df5013_103",
+        "d5aabfddcbb8f931926c17b199df5013_47",
+        "d99e6ddd03f39112b96d01466527c172_27",
+        "d5aabfddcbb8f931926c17b199df5013_100",
+        "1c148c42e7e2536cec74bc718fa34a76_44",
+        "1c148c42e7e2536cec74bc718fa34a76_43",
+        "d5aabfddcbb8f931926c17b199df5013_271"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0016",
+      "query": "What does the manual say about Solvent vapors are toxic. Do not use solvent in a confined space. Avoid long periods of?",
+      "expected_text_chunks": [
+        "178b8b8d99398fc316e0ddafd8560dda"
+      ],
+      "expected_text_elements": [
+        "178b8b8d99398fc316e0ddafd8560dda"
+      ],
+      "expected_pages": [
+        "TM-9-254#p2"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_2"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "178b8b8d99398fc316e0ddafd8560dda",
+        "a2b866c7038a11155f0d294a5d47b92c",
+        "b877352f76b9be0eda619c2d5719a13a",
+        "a286b552227b6f9c6545f6152da4c428",
+        "f701b1260f7f980104cd6b07d854f8e2",
+        "972d9c0de2d2ac1888ad9cfc9024d1cb",
+        "108ea5b61c08def326bf9ccf99418196",
+        "cb29217a8e70dfe206a6d2705e5c69b1",
+        "c46610ab287e188f4e5b3c60c7fd288e",
+        "e2f6c3d3387c7c089a9e66f954a1e753"
+      ],
+      "retrieved_top_k_elements": [
+        "178b8b8d99398fc316e0ddafd8560dda",
+        "a2b866c7038a11155f0d294a5d47b92c",
+        "b877352f76b9be0eda619c2d5719a13a",
+        "a286b552227b6f9c6545f6152da4c428",
+        "f701b1260f7f980104cd6b07d854f8e2",
+        "972d9c0de2d2ac1888ad9cfc9024d1cb",
+        "108ea5b61c08def326bf9ccf99418196",
+        "cb29217a8e70dfe206a6d2705e5c69b1",
+        "c46610ab287e188f4e5b3c60c7fd288e",
+        "e2f6c3d3387c7c089a9e66f954a1e753"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_2",
+        "d5aabfddcbb8f931926c17b199df5013_25",
+        "d5aabfddcbb8f931926c17b199df5013_66",
+        "d5aabfddcbb8f931926c17b199df5013_2",
+        "d5aabfddcbb8f931926c17b199df5013_64",
+        "1c148c42e7e2536cec74bc718fa34a76_67",
+        "d5aabfddcbb8f931926c17b199df5013_24",
+        "d5aabfddcbb8f931926c17b199df5013_24",
+        "1c148c42e7e2536cec74bc718fa34a76_25",
+        "1c148c42e7e2536cec74bc718fa34a76_121"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0017",
+      "query": "Summarize the guidance on Distribution Statement A: Approved for public release; distribution is unlimited.",
+      "expected_text_chunks": [
+        "4c4fb83b33b00419d4b3161daa18d6b6"
+      ],
+      "expected_text_elements": [
+        "4c4fb83b33b00419d4b3161daa18d6b6"
+      ],
+      "expected_pages": [
+        "TM-9-254#p3"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_3"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "4c4fb83b33b00419d4b3161daa18d6b6",
+        "6101b119f2ae5a31db73b17dbcd32283",
+        "cf3cb279b37af6d29984fd3717ea5763",
+        "0d1814874d0c221e8f2a4c0095b880d5",
+        "faec0c42ffe679a61a5df5d6127138f7",
+        "e9cdd13516159ad5aa52ea31e709cd41",
+        "4068fedefd5f727d9cc3a620fc9794ac",
+        "75c8d933e633639edfd2c9d0f1df6936",
+        "60d68ad0d1aa8e05eca13df671b74c9f",
+        "0691fee404118cf0ad4507731cb4b141"
+      ],
+      "retrieved_top_k_elements": [
+        "4c4fb83b33b00419d4b3161daa18d6b6",
+        "6101b119f2ae5a31db73b17dbcd32283",
+        "cf3cb279b37af6d29984fd3717ea5763",
+        "0d1814874d0c221e8f2a4c0095b880d5",
+        "faec0c42ffe679a61a5df5d6127138f7",
+        "e9cdd13516159ad5aa52ea31e709cd41",
+        "4068fedefd5f727d9cc3a620fc9794ac",
+        "75c8d933e633639edfd2c9d0f1df6936",
+        "60d68ad0d1aa8e05eca13df671b74c9f",
+        "0691fee404118cf0ad4507731cb4b141"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_3",
+        "d5aabfddcbb8f931926c17b199df5013_15",
+        "1c148c42e7e2536cec74bc718fa34a76_1",
+        "d5aabfddcbb8f931926c17b199df5013_10",
+        "d5aabfddcbb8f931926c17b199df5013_6",
+        "d5aabfddcbb8f931926c17b199df5013_14",
+        "d5aabfddcbb8f931926c17b199df5013_12",
+        "1c148c42e7e2536cec74bc718fa34a76_165",
+        "d5aabfddcbb8f931926c17b199df5013_8",
+        "d5aabfddcbb8f931926c17b199df5013_12"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0018",
+      "query": "According to the manual, how is DISTRIBUTION: To be distributed in accordance with the initial distribution requirements described?",
+      "expected_text_chunks": [
+        "2918e83d6e19de282c61c6bfae52c7f2"
+      ],
+      "expected_text_elements": [
+        "2918e83d6e19de282c61c6bfae52c7f2"
+      ],
+      "expected_pages": [
+        "TM-9-254#p4"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_4"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "2918e83d6e19de282c61c6bfae52c7f2",
+        "0d1814874d0c221e8f2a4c0095b880d5",
+        "2ab1fe4fc18cba808c921724fb1605b2",
+        "faec0c42ffe679a61a5df5d6127138f7",
+        "28d34bbdacdbaf32164f3e3ba5893efc",
+        "4068fedefd5f727d9cc3a620fc9794ac",
+        "0691fee404118cf0ad4507731cb4b141",
+        "60d68ad0d1aa8e05eca13df671b74c9f",
+        "56623914d6f8496214abbdf90aa2b839",
+        "31da9a94e58781fe40402be6bd3cd501"
+      ],
+      "retrieved_top_k_elements": [
+        "2918e83d6e19de282c61c6bfae52c7f2",
+        "0d1814874d0c221e8f2a4c0095b880d5",
+        "2ab1fe4fc18cba808c921724fb1605b2",
+        "faec0c42ffe679a61a5df5d6127138f7",
+        "28d34bbdacdbaf32164f3e3ba5893efc",
+        "4068fedefd5f727d9cc3a620fc9794ac",
+        "0691fee404118cf0ad4507731cb4b141",
+        "60d68ad0d1aa8e05eca13df671b74c9f",
+        "56623914d6f8496214abbdf90aa2b839",
+        "31da9a94e58781fe40402be6bd3cd501"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_4",
+        "d5aabfddcbb8f931926c17b199df5013_10",
+        "1c148c42e7e2536cec74bc718fa34a76_235",
+        "d5aabfddcbb8f931926c17b199df5013_6",
+        "d5aabfddcbb8f931926c17b199df5013_8",
+        "d5aabfddcbb8f931926c17b199df5013_12",
+        "d5aabfddcbb8f931926c17b199df5013_12",
+        "d5aabfddcbb8f931926c17b199df5013_8",
+        "d5aabfddcbb8f931926c17b199df5013_325",
+        "d5aabfddcbb8f931926c17b199df5013_14"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0019",
+      "query": "From the manual, explain The purpose of this change notice is to provide notification under Section 326 of Public.",
+      "expected_text_chunks": [
+        "efaf2fba8a6b07adc89e1f08582c165e"
+      ],
+      "expected_text_elements": [
+        "efaf2fba8a6b07adc89e1f08582c165e"
+      ],
+      "expected_pages": [
+        "TM-9-254#p5"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_5"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "6e3b64fc6c5fbf98e51fc27684b0e603",
+        "efaf2fba8a6b07adc89e1f08582c165e",
+        "93277b831f1647441a82fa07e3167dbf",
+        "3274761f96f20dc7bb52ab7625552245",
+        "311f3b402ca0bf25a61b23c35df3af61",
+        "a298e0a21e81c5d602f40c8446a79765",
+        "60fc08f9999985ca37f3476f73d480fe",
+        "458c4063b0346523b81dc2f0010d8c5d",
+        "8fa0b8201fb90cf9b2b7a25b86c3d3a3",
+        "391426f71fa676d6b11199f0dba7f91d"
+      ],
+      "retrieved_top_k_elements": [
+        "6e3b64fc6c5fbf98e51fc27684b0e603",
+        "efaf2fba8a6b07adc89e1f08582c165e",
+        "93277b831f1647441a82fa07e3167dbf",
+        "3274761f96f20dc7bb52ab7625552245",
+        "311f3b402ca0bf25a61b23c35df3af61",
+        "a298e0a21e81c5d602f40c8446a79765",
+        "60fc08f9999985ca37f3476f73d480fe",
+        "458c4063b0346523b81dc2f0010d8c5d",
+        "8fa0b8201fb90cf9b2b7a25b86c3d3a3",
+        "391426f71fa676d6b11199f0dba7f91d"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_5",
+        "d5aabfddcbb8f931926c17b199df5013_5",
+        "d5aabfddcbb8f931926c17b199df5013_25",
+        "d5aabfddcbb8f931926c17b199df5013_326",
+        "d99e6ddd03f39112b96d01466527c172_3",
+        "d5aabfddcbb8f931926c17b199df5013_326",
+        "d5aabfddcbb8f931926c17b199df5013_295",
+        "d5aabfddcbb8f931926c17b199df5013_258",
+        "d5aabfddcbb8f931926c17b199df5013_15",
+        "d5aabfddcbb8f931926c17b199df5013_7"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0020",
+      "query": "What details are given for DISTRlBUTIoN: To be distributed in accordance with DA Form 12-34-E, Block 2407,?",
+      "expected_text_chunks": [
+        "faec0c42ffe679a61a5df5d6127138f7"
+      ],
+      "expected_text_elements": [
+        "faec0c42ffe679a61a5df5d6127138f7"
+      ],
+      "expected_pages": [
+        "TM-9-254#p6"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_6"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "faec0c42ffe679a61a5df5d6127138f7",
+        "0d1814874d0c221e8f2a4c0095b880d5",
+        "28d34bbdacdbaf32164f3e3ba5893efc",
+        "9443a5ddcc51236ffed1276ddf864f76",
+        "db5a5fffdda63e3811cc1b2bb686d4d0",
+        "31da9a94e58781fe40402be6bd3cd501",
+        "56623914d6f8496214abbdf90aa2b839",
+        "0691fee404118cf0ad4507731cb4b141",
+        "2ab1fe4fc18cba808c921724fb1605b2",
+        "2918e83d6e19de282c61c6bfae52c7f2"
+      ],
+      "retrieved_top_k_elements": [
+        "faec0c42ffe679a61a5df5d6127138f7",
+        "0d1814874d0c221e8f2a4c0095b880d5",
+        "28d34bbdacdbaf32164f3e3ba5893efc",
+        "9443a5ddcc51236ffed1276ddf864f76",
+        "db5a5fffdda63e3811cc1b2bb686d4d0",
+        "31da9a94e58781fe40402be6bd3cd501",
+        "56623914d6f8496214abbdf90aa2b839",
+        "0691fee404118cf0ad4507731cb4b141",
+        "2ab1fe4fc18cba808c921724fb1605b2",
+        "2918e83d6e19de282c61c6bfae52c7f2"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_6",
+        "d5aabfddcbb8f931926c17b199df5013_10",
+        "d5aabfddcbb8f931926c17b199df5013_8",
+        "d5aabfddcbb8f931926c17b199df5013_8",
+        "d5aabfddcbb8f931926c17b199df5013_8",
+        "d5aabfddcbb8f931926c17b199df5013_14",
+        "d5aabfddcbb8f931926c17b199df5013_325",
+        "d5aabfddcbb8f931926c17b199df5013_12",
+        "1c148c42e7e2536cec74bc718fa34a76_235",
+        "d5aabfddcbb8f931926c17b199df5013_4"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0021",
+      "query": "What does the manual say about New or changed material is indicated by a vertical bar in the margin of the pages?",
+      "expected_text_chunks": [
+        "cad63742d8822be87b10ca551eb9b2ff"
+      ],
+      "expected_text_elements": [
+        "cad63742d8822be87b10ca551eb9b2ff"
+      ],
+      "expected_pages": [
+        "TM-9-254#p7"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_7"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "cd2ff1eac0e8ed0e0b1b734cbd455774",
+        "cad63742d8822be87b10ca551eb9b2ff",
+        "737c77e7370a6c623772e0d77ff9d0d2",
+        "f287adc8eca1d4c05003f51dfa8eaf3f",
+        "f1d76f2152f82fb69650b09749e45152",
+        "4b4b813dafb42271178bc83732b2df65",
+        "3274761f96f20dc7bb52ab7625552245",
+        "4b568530611e5cbe13d52d404c0f7786",
+        "c89d172f63e40d0ce94be3b9f085e099",
+        "b2a05c75b2e5ae510becb176d67ad9ee"
+      ],
+      "retrieved_top_k_elements": [
+        "cd2ff1eac0e8ed0e0b1b734cbd455774",
+        "cad63742d8822be87b10ca551eb9b2ff",
+        "737c77e7370a6c623772e0d77ff9d0d2",
+        "f287adc8eca1d4c05003f51dfa8eaf3f",
+        "f1d76f2152f82fb69650b09749e45152",
+        "4b4b813dafb42271178bc83732b2df65",
+        "3274761f96f20dc7bb52ab7625552245",
+        "4b568530611e5cbe13d52d404c0f7786",
+        "c89d172f63e40d0ce94be3b9f085e099",
+        "b2a05c75b2e5ae510becb176d67ad9ee"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_3",
+        "d5aabfddcbb8f931926c17b199df5013_7",
+        "d5aabfddcbb8f931926c17b199df5013_13",
+        "d5aabfddcbb8f931926c17b199df5013_9",
+        "d5aabfddcbb8f931926c17b199df5013_11",
+        "d5aabfddcbb8f931926c17b199df5013_23",
+        "d5aabfddcbb8f931926c17b199df5013_326",
+        "1c148c42e7e2536cec74bc718fa34a76_25",
+        "1c148c42e7e2536cec74bc718fa34a76_72",
+        "d5aabfddcbb8f931926c17b199df5013_252"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0022",
+      "query": "Summarize the guidance on To be distributed in accordance with DA Form 12-34-E,Block 2407,requirements for TM 9-254.",
+      "expected_text_chunks": [
+        "28d34bbdacdbaf32164f3e3ba5893efc"
+      ],
+      "expected_text_elements": [
+        "28d34bbdacdbaf32164f3e3ba5893efc"
+      ],
+      "expected_pages": [
+        "TM-9-254#p8"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_8"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "28d34bbdacdbaf32164f3e3ba5893efc",
+        "faec0c42ffe679a61a5df5d6127138f7",
+        "0d1814874d0c221e8f2a4c0095b880d5",
+        "9443a5ddcc51236ffed1276ddf864f76",
+        "db5a5fffdda63e3811cc1b2bb686d4d0",
+        "2918e83d6e19de282c61c6bfae52c7f2",
+        "56623914d6f8496214abbdf90aa2b839",
+        "0691fee404118cf0ad4507731cb4b141",
+        "31da9a94e58781fe40402be6bd3cd501",
+        "2ab1fe4fc18cba808c921724fb1605b2"
+      ],
+      "retrieved_top_k_elements": [
+        "28d34bbdacdbaf32164f3e3ba5893efc",
+        "faec0c42ffe679a61a5df5d6127138f7",
+        "0d1814874d0c221e8f2a4c0095b880d5",
+        "9443a5ddcc51236ffed1276ddf864f76",
+        "db5a5fffdda63e3811cc1b2bb686d4d0",
+        "2918e83d6e19de282c61c6bfae52c7f2",
+        "56623914d6f8496214abbdf90aa2b839",
+        "0691fee404118cf0ad4507731cb4b141",
+        "31da9a94e58781fe40402be6bd3cd501",
+        "2ab1fe4fc18cba808c921724fb1605b2"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_8",
+        "d5aabfddcbb8f931926c17b199df5013_6",
+        "d5aabfddcbb8f931926c17b199df5013_10",
+        "d5aabfddcbb8f931926c17b199df5013_8",
+        "d5aabfddcbb8f931926c17b199df5013_8",
+        "d5aabfddcbb8f931926c17b199df5013_4",
+        "d5aabfddcbb8f931926c17b199df5013_325",
+        "d5aabfddcbb8f931926c17b199df5013_12",
+        "d5aabfddcbb8f931926c17b199df5013_14",
+        "1c148c42e7e2536cec74bc718fa34a76_235"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0023",
+      "query": "According to the manual, how is New or changed material is indicated by a vertical bar in the margin of the pages described?",
+      "expected_text_chunks": [
+        "f287adc8eca1d4c05003f51dfa8eaf3f"
+      ],
+      "expected_text_elements": [
+        "f287adc8eca1d4c05003f51dfa8eaf3f"
+      ],
+      "expected_pages": [
+        "TM-9-254#p9"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_9"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "737c77e7370a6c623772e0d77ff9d0d2",
+        "f287adc8eca1d4c05003f51dfa8eaf3f",
+        "cad63742d8822be87b10ca551eb9b2ff",
+        "cd2ff1eac0e8ed0e0b1b734cbd455774",
+        "f1d76f2152f82fb69650b09749e45152",
+        "5535b8c341b18787c7ca4fd6ff407181",
+        "4b4b813dafb42271178bc83732b2df65",
+        "b4bd170529031de1c17c2e939f10ef3f",
+        "4b568530611e5cbe13d52d404c0f7786",
+        "c89d172f63e40d0ce94be3b9f085e099"
+      ],
+      "retrieved_top_k_elements": [
+        "737c77e7370a6c623772e0d77ff9d0d2",
+        "f287adc8eca1d4c05003f51dfa8eaf3f",
+        "cad63742d8822be87b10ca551eb9b2ff",
+        "cd2ff1eac0e8ed0e0b1b734cbd455774",
+        "f1d76f2152f82fb69650b09749e45152",
+        "5535b8c341b18787c7ca4fd6ff407181",
+        "4b4b813dafb42271178bc83732b2df65",
+        "b4bd170529031de1c17c2e939f10ef3f",
+        "4b568530611e5cbe13d52d404c0f7786",
+        "c89d172f63e40d0ce94be3b9f085e099"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_13",
+        "d5aabfddcbb8f931926c17b199df5013_9",
+        "d5aabfddcbb8f931926c17b199df5013_7",
+        "d5aabfddcbb8f931926c17b199df5013_3",
+        "d5aabfddcbb8f931926c17b199df5013_11",
+        "d5aabfddcbb8f931926c17b199df5013_23",
+        "d5aabfddcbb8f931926c17b199df5013_23",
+        "d5aabfddcbb8f931926c17b199df5013_23",
+        "1c148c42e7e2536cec74bc718fa34a76_25",
+        "1c148c42e7e2536cec74bc718fa34a76_72"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0024",
+      "query": "From the manual, explain PATRICIA P. HICKERSON Brigadier General, United States Army The Adjutant General.",
+      "expected_text_chunks": [
+        "3ae827a36959d0e03cd699625738b760"
+      ],
+      "expected_text_elements": [
+        "3ae827a36959d0e03cd699625738b760"
+      ],
+      "expected_pages": [
+        "TM-9-254#p10"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_10"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "3ae827a36959d0e03cd699625738b760",
+        "667133956ad9a791962f56b31dea6f27",
+        "0a494195a3dcaeef83a436e47114ff34",
+        "d17037d6cb9739c327f94467d30707a2",
+        "48c035a72fc0baa3c71f43bb89a7ef87",
+        "186af95fb8315d4272569795a027d175",
+        "bcb8e6aac42f7dd03746bec819d8573b",
+        "27c7ae20628fcda8f21642ac7fe54e60",
+        "f0678d71c919bb4dc17200a4776b7867",
+        "3bacdc8bde01b18368cf418402654863"
+      ],
+      "retrieved_top_k_elements": [
+        "3ae827a36959d0e03cd699625738b760",
+        "667133956ad9a791962f56b31dea6f27",
+        "0a494195a3dcaeef83a436e47114ff34",
+        "d17037d6cb9739c327f94467d30707a2",
+        "48c035a72fc0baa3c71f43bb89a7ef87",
+        "186af95fb8315d4272569795a027d175",
+        "bcb8e6aac42f7dd03746bec819d8573b",
+        "27c7ae20628fcda8f21642ac7fe54e60",
+        "f0678d71c919bb4dc17200a4776b7867",
+        "3bacdc8bde01b18368cf418402654863"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_10",
+        "1c148c42e7e2536cec74bc718fa34a76_235",
+        "d5aabfddcbb8f931926c17b199df5013_12",
+        "d5aabfddcbb8f931926c17b199df5013_325",
+        "d5aabfddcbb8f931926c17b199df5013_14",
+        "d5aabfddcbb8f931926c17b199df5013_325",
+        "d5aabfddcbb8f931926c17b199df5013_14",
+        "d5aabfddcbb8f931926c17b199df5013_4",
+        "d5aabfddcbb8f931926c17b199df5013_14",
+        "d5aabfddcbb8f931926c17b199df5013_6"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0025",
+      "query": "What details are given for New of changed material is indicated by a vertical bar in the margin of the pages?",
+      "expected_text_chunks": [
+        "f1d76f2152f82fb69650b09749e45152"
+      ],
+      "expected_text_elements": [
+        "f1d76f2152f82fb69650b09749e45152"
+      ],
+      "expected_pages": [
+        "TM-9-254#p11"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_11"
+      ],
+      "expected_assets": [],
+      "retrieved_top_k_chunks": [
+        "f1d76f2152f82fb69650b09749e45152",
+        "cd2ff1eac0e8ed0e0b1b734cbd455774",
+        "cad63742d8822be87b10ca551eb9b2ff",
+        "f287adc8eca1d4c05003f51dfa8eaf3f",
+        "737c77e7370a6c623772e0d77ff9d0d2",
+        "6e3b64fc6c5fbf98e51fc27684b0e603",
+        "4b568530611e5cbe13d52d404c0f7786",
+        "a411935ec76366cd4e1c4783d817ce94",
+        "9d46b128d8202430da95b0b2755d2478",
+        "8a6521e711ead4ffd841eb1cce91651a"
+      ],
+      "retrieved_top_k_elements": [
+        "f1d76f2152f82fb69650b09749e45152",
+        "cd2ff1eac0e8ed0e0b1b734cbd455774",
+        "cad63742d8822be87b10ca551eb9b2ff",
+        "f287adc8eca1d4c05003f51dfa8eaf3f",
+        "737c77e7370a6c623772e0d77ff9d0d2",
+        "6e3b64fc6c5fbf98e51fc27684b0e603",
+        "4b568530611e5cbe13d52d404c0f7786",
+        "a411935ec76366cd4e1c4783d817ce94",
+        "9d46b128d8202430da95b0b2755d2478",
+        "8a6521e711ead4ffd841eb1cce91651a"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_11",
+        "d5aabfddcbb8f931926c17b199df5013_3",
+        "d5aabfddcbb8f931926c17b199df5013_7",
+        "d5aabfddcbb8f931926c17b199df5013_9",
+        "d5aabfddcbb8f931926c17b199df5013_13",
+        "d5aabfddcbb8f931926c17b199df5013_5",
+        "1c148c42e7e2536cec74bc718fa34a76_25",
+        "d5aabfddcbb8f931926c17b199df5013_11",
+        "d5aabfddcbb8f931926c17b199df5013_244",
+        "d5aabfddcbb8f931926c17b199df5013_3"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": null,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0026",
+      "query": "Summarize the table for iii through viii iii through viii ---------------------------- ------------------------------------ 1-1 and.",
+      "expected_text_chunks": [
+        "b119ad141129739de92bf72700a2ea02"
+      ],
+      "expected_text_elements": [
+        "b119ad141129739de92bf72700a2ea02"
+      ],
+      "expected_pages": [
+        "TM-9-254#p3"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_3"
+      ],
+      "expected_assets": [
+        "asset_a938fb92b224"
+      ],
+      "retrieved_top_k_chunks": [
+        "59f4ee8e8f04ac1e0af5b365672fcec1",
+        "b119ad141129739de92bf72700a2ea02",
+        "647238422ec1a643039073ca0955d675",
+        "5498b3fa5c8e4eab6f8787df80365882",
+        "db5326971308fdfdd4ae921d9a2881ad",
+        "ad29020490b660cdf159f4804c2177b7",
+        "98291de14ccf33c1ae3a33fe2cfc0bec",
+        "7ac192b1a24156f4d321802bce68fe93",
+        "2e153d9cb2654aab999cc2199f77d4f5",
+        "087834322b709133622a23dc6fd89606"
+      ],
+      "retrieved_top_k_elements": [
+        "59f4ee8e8f04ac1e0af5b365672fcec1",
+        "b119ad141129739de92bf72700a2ea02",
+        "647238422ec1a643039073ca0955d675",
+        "5498b3fa5c8e4eab6f8787df80365882",
+        "db5326971308fdfdd4ae921d9a2881ad",
+        "ad29020490b660cdf159f4804c2177b7",
+        "98291de14ccf33c1ae3a33fe2cfc0bec",
+        "7ac192b1a24156f4d321802bce68fe93",
+        "2e153d9cb2654aab999cc2199f77d4f5",
+        "087834322b709133622a23dc6fd89606"
+      ],
+      "retrieved_top_k_page_keys": [
+        "1c148c42e7e2536cec74bc718fa34a76_33",
+        "d5aabfddcbb8f931926c17b199df5013_3",
+        "d5aabfddcbb8f931926c17b199df5013_35",
+        "1c148c42e7e2536cec74bc718fa34a76_36",
+        "d5aabfddcbb8f931926c17b199df5013_7",
+        "d99e6ddd03f39112b96d01466527c172_8",
+        "d5aabfddcbb8f931926c17b199df5013_22",
+        "d5aabfddcbb8f931926c17b199df5013_11",
+        "d5aabfddcbb8f931926c17b199df5013_65",
+        "d5aabfddcbb8f931926c17b199df5013_112"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0027",
+      "query": "From the table on page 7, what are the key entries for CHANGE HEADQUARTERS ---------- ----------------------------- DEPARTMENT OF THE ARMY No 4?",
+      "expected_text_chunks": [
+        "3ec5480e4e6d641087e26524ac124275"
+      ],
+      "expected_text_elements": [
+        "3ec5480e4e6d641087e26524ac124275"
+      ],
+      "expected_pages": [
+        "TM-9-254#p7"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_7"
+      ],
+      "expected_assets": [
+        "asset_85d15d9e8069"
+      ],
+      "retrieved_top_k_chunks": [
+        "83c5468c68f64f67d23d0d852be6f5de",
+        "3ec5480e4e6d641087e26524ac124275",
+        "65f057b883685cbc455a979bcb210503",
+        "0e33b3e24021ff12da76b690f34616ee",
+        "41c7f36fdca21ddf1f187499fdb50695",
+        "df596cff4e7d20106049b06074e7fe03",
+        "31c113d7f23258b9075b6f5efc7163c8",
+        "d3234135828bd1843fe17c3138d1a0d3",
+        "5831bd40ec147e2c2cd3d8aa8cdc6109",
+        "a7b93da6db0d9ce6befcc0080d4a2b70"
+      ],
+      "retrieved_top_k_elements": [
+        "83c5468c68f64f67d23d0d852be6f5de",
+        "3ec5480e4e6d641087e26524ac124275",
+        "65f057b883685cbc455a979bcb210503",
+        "0e33b3e24021ff12da76b690f34616ee",
+        "41c7f36fdca21ddf1f187499fdb50695",
+        "df596cff4e7d20106049b06074e7fe03",
+        "31c113d7f23258b9075b6f5efc7163c8",
+        "d3234135828bd1843fe17c3138d1a0d3",
+        "5831bd40ec147e2c2cd3d8aa8cdc6109",
+        "a7b93da6db0d9ce6befcc0080d4a2b70"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_1",
+        "d5aabfddcbb8f931926c17b199df5013_7",
+        "d5aabfddcbb8f931926c17b199df5013_3",
+        "d5aabfddcbb8f931926c17b199df5013_5",
+        "d5aabfddcbb8f931926c17b199df5013_9",
+        "d5aabfddcbb8f931926c17b199df5013_11",
+        "d5aabfddcbb8f931926c17b199df5013_13",
+        "1c148c42e7e2536cec74bc718fa34a76_4",
+        "d5aabfddcbb8f931926c17b199df5013_15",
+        "d5aabfddcbb8f931926c17b199df5013_124"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0028",
+      "query": "What does the table on page 9 show about CHANGE HEADQUARTERS ---------- ------------------------------- DEPARTMENT OF THE ARMY No 3?",
+      "expected_text_chunks": [
+        "41c7f36fdca21ddf1f187499fdb50695"
+      ],
+      "expected_text_elements": [
+        "41c7f36fdca21ddf1f187499fdb50695"
+      ],
+      "expected_pages": [
+        "TM-9-254#p9"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_9"
+      ],
+      "expected_assets": [
+        "asset_582b057dc445"
+      ],
+      "retrieved_top_k_chunks": [
+        "83c5468c68f64f67d23d0d852be6f5de",
+        "41c7f36fdca21ddf1f187499fdb50695",
+        "65f057b883685cbc455a979bcb210503",
+        "0e33b3e24021ff12da76b690f34616ee",
+        "3ec5480e4e6d641087e26524ac124275",
+        "df596cff4e7d20106049b06074e7fe03",
+        "31c113d7f23258b9075b6f5efc7163c8",
+        "01160344dd3613327724911b26e5ef8c",
+        "d3234135828bd1843fe17c3138d1a0d3",
+        "8c33504e6f222f3667334b8f44a9d413"
+      ],
+      "retrieved_top_k_elements": [
+        "83c5468c68f64f67d23d0d852be6f5de",
+        "41c7f36fdca21ddf1f187499fdb50695",
+        "65f057b883685cbc455a979bcb210503",
+        "0e33b3e24021ff12da76b690f34616ee",
+        "3ec5480e4e6d641087e26524ac124275",
+        "df596cff4e7d20106049b06074e7fe03",
+        "31c113d7f23258b9075b6f5efc7163c8",
+        "01160344dd3613327724911b26e5ef8c",
+        "d3234135828bd1843fe17c3138d1a0d3",
+        "8c33504e6f222f3667334b8f44a9d413"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_1",
+        "d5aabfddcbb8f931926c17b199df5013_9",
+        "d5aabfddcbb8f931926c17b199df5013_3",
+        "d5aabfddcbb8f931926c17b199df5013_5",
+        "d5aabfddcbb8f931926c17b199df5013_7",
+        "d5aabfddcbb8f931926c17b199df5013_11",
+        "d5aabfddcbb8f931926c17b199df5013_13",
+        "d5aabfddcbb8f931926c17b199df5013_265",
+        "1c148c42e7e2536cec74bc718fa34a76_4",
+        "d5aabfddcbb8f931926c17b199df5013_271"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 0.5
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0029",
+      "query": "Which figure shows Other for . Part Numbers: 12-34-E, 2407, 9-254. Details: This document should be?",
+      "expected_text_chunks": [
+        "db5a5fffdda63e3811cc1b2bb686d4d0"
+      ],
+      "expected_text_elements": [
+        "db5a5fffdda63e3811cc1b2bb686d4d0"
+      ],
+      "expected_pages": [
+        "TM-9-254#p8"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_8"
+      ],
+      "expected_assets": [
+        "asset_7c29b5397102"
+      ],
+      "retrieved_top_k_chunks": [
+        "db5a5fffdda63e3811cc1b2bb686d4d0",
+        "9443a5ddcc51236ffed1276ddf864f76",
+        "3274761f96f20dc7bb52ab7625552245",
+        "dd8c22a75ce08813e85a6193171dc49f",
+        "28d34bbdacdbaf32164f3e3ba5893efc",
+        "4a8ca5a552d397de6f67d84e32eb1789",
+        "faec0c42ffe679a61a5df5d6127138f7",
+        "1f73e714d0ce08f773512d87e8060ff7",
+        "0d1814874d0c221e8f2a4c0095b880d5",
+        "4714cbc0b6877623b7fc48abe6100740"
+      ],
+      "retrieved_top_k_elements": [
+        "db5a5fffdda63e3811cc1b2bb686d4d0",
+        "9443a5ddcc51236ffed1276ddf864f76",
+        "3274761f96f20dc7bb52ab7625552245",
+        "dd8c22a75ce08813e85a6193171dc49f",
+        "28d34bbdacdbaf32164f3e3ba5893efc",
+        "4a8ca5a552d397de6f67d84e32eb1789",
+        "faec0c42ffe679a61a5df5d6127138f7",
+        "1f73e714d0ce08f773512d87e8060ff7",
+        "0d1814874d0c221e8f2a4c0095b880d5",
+        "4714cbc0b6877623b7fc48abe6100740"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_8",
+        "d5aabfddcbb8f931926c17b199df5013_8",
+        "d5aabfddcbb8f931926c17b199df5013_326",
+        "d5aabfddcbb8f931926c17b199df5013_230",
+        "d5aabfddcbb8f931926c17b199df5013_8",
+        "1c148c42e7e2536cec74bc718fa34a76_238",
+        "d5aabfddcbb8f931926c17b199df5013_6",
+        "d5aabfddcbb8f931926c17b199df5013_101",
+        "d5aabfddcbb8f931926c17b199df5013_10",
+        "1c148c42e7e2536cec74bc718fa34a76_47"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 1.0,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.3333333333333333,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "strict_text": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "pages": {
+            "recall": 1.0,
+            "precision": 0.1,
+            "mrr": 1.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    },
+    {
+      "id": "q_0030",
+      "query": "What does the figure on page 29 illustrate?",
+      "expected_text_chunks": [
+        "8a8b16ac984bf1bfb820fa85c20438f2"
+      ],
+      "expected_text_elements": [
+        "8a8b16ac984bf1bfb820fa85c20438f2"
+      ],
+      "expected_pages": [
+        "TM-9-254#p29"
+      ],
+      "expected_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_29"
+      ],
+      "expected_assets": [
+        "asset_9265f36a31a9"
+      ],
+      "retrieved_top_k_chunks": [
+        "96b340bd8777aaa67692cd377df401d1",
+        "5b9a86efa6b8ba5801294dc7caf2c81e",
+        "58f0e4fe5b0d00a3b051c601133cc717",
+        "10807a51ff6a539b04024076f7a48127",
+        "002c93e5cd375c3dad15ce6d77ae64a6",
+        "510f86689dad42ec5092b709fcd48f64",
+        "ba33092d122c3fcf5caf46a93ac91312",
+        "26b6ced6cedb68bd39c94cea623bfab5",
+        "211138c0c99c8a04dc5c8f3e6670fda6",
+        "92b6b6a55bb2780e4f3fa9cd32c7c147"
+      ],
+      "retrieved_top_k_elements": [
+        "96b340bd8777aaa67692cd377df401d1",
+        "5b9a86efa6b8ba5801294dc7caf2c81e",
+        "58f0e4fe5b0d00a3b051c601133cc717",
+        "10807a51ff6a539b04024076f7a48127",
+        "002c93e5cd375c3dad15ce6d77ae64a6",
+        "510f86689dad42ec5092b709fcd48f64",
+        "ba33092d122c3fcf5caf46a93ac91312",
+        "26b6ced6cedb68bd39c94cea623bfab5",
+        "211138c0c99c8a04dc5c8f3e6670fda6",
+        "92b6b6a55bb2780e4f3fa9cd32c7c147"
+      ],
+      "retrieved_top_k_page_keys": [
+        "d5aabfddcbb8f931926c17b199df5013_123",
+        "d5aabfddcbb8f931926c17b199df5013_62",
+        "d5aabfddcbb8f931926c17b199df5013_61",
+        "d99e6ddd03f39112b96d01466527c172_39",
+        "d5aabfddcbb8f931926c17b199df5013_118",
+        "d5aabfddcbb8f931926c17b199df5013_289",
+        "d5aabfddcbb8f931926c17b199df5013_123",
+        "d5aabfddcbb8f931926c17b199df5013_292",
+        "d5aabfddcbb8f931926c17b199df5013_291",
+        "d99e6ddd03f39112b96d01466527c172_93"
+      ],
+      "metrics": {
+        "k_1": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_3": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_5": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        },
+        "k_10": {
+          "relaxed_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "strict_text": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "pages": {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0
+          },
+          "assets": {
+            "hit": 0.0,
+            "retrieved_asset_ids": []
+          }
+        }
+      }
+    }
+  ],
+  "by_k": {
+    "1": {
+      "relaxed_text": {
+        "recall": 0.6,
+        "precision": 0.6,
+        "mrr": 0.6,
+        "queries": 30
+      },
+      "strict_text": {
+        "recall": 0.6,
+        "precision": 0.6,
+        "mrr": 0.6,
+        "queries": 30
+      },
+      "pages": {
+        "recall": 0.6333333333333333,
+        "precision": 0.6333333333333333,
+        "mrr": 0.6333333333333333,
+        "queries": 30
+      },
+      "assets": {
+        "hit_rate": 0.0,
+        "queries": 10
+      }
+    },
+    "3": {
+      "relaxed_text": {
+        "recall": 0.9,
+        "precision": 0.29999999999999993,
+        "mrr": 0.7444444444444446,
+        "queries": 30
+      },
+      "strict_text": {
+        "recall": 0.9,
+        "precision": 0.29999999999999993,
+        "mrr": 0.7444444444444446,
+        "queries": 30
+      },
+      "pages": {
+        "recall": 0.9,
+        "precision": 0.29999999999999993,
+        "mrr": 0.7611111111111112,
+        "queries": 30
+      },
+      "assets": {
+        "hit_rate": 0.0,
+        "queries": 10
+      }
+    },
+    "5": {
+      "relaxed_text": {
+        "recall": 0.9333333333333333,
+        "precision": 0.18666666666666673,
+        "mrr": 0.7511111111111111,
+        "queries": 30
+      },
+      "strict_text": {
+        "recall": 0.9333333333333333,
+        "precision": 0.18666666666666673,
+        "mrr": 0.7511111111111111,
+        "queries": 30
+      },
+      "pages": {
+        "recall": 0.9333333333333333,
+        "precision": 0.18666666666666673,
+        "mrr": 0.7677777777777777,
+        "queries": 30
+      },
+      "assets": {
+        "hit_rate": 0.0,
+        "queries": 10
+      }
+    },
+    "10": {
+      "relaxed_text": {
+        "recall": 0.9333333333333333,
+        "precision": 0.09333333333333337,
+        "mrr": 0.7511111111111111,
+        "queries": 30
+      },
+      "strict_text": {
+        "recall": 0.9333333333333333,
+        "precision": 0.09333333333333337,
+        "mrr": 0.7511111111111111,
+        "queries": 30
+      },
+      "pages": {
+        "recall": 0.9333333333333333,
+        "precision": 0.09333333333333337,
+        "mrr": 0.7677777777777777,
+        "queries": 30
+      },
+      "assets": {
+        "hit_rate": 0.0,
+        "queries": 10
+      }
+    }
+  }
+}
