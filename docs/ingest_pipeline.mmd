@@ -1,0 +1,220 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#e1f5fe', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#f5f5f5'}}}%%
+flowchart TD
+  %% --- STYLES ---
+  %% Definitions for visual distinction of node types
+  classDef inputs fill:#eceff1,stroke:#cfd8dc,color:#37474f,stroke-dasharray: 5 5;
+  classDef process fill:#e3f2fd,stroke:#64b5f6,color:#0d47a1;
+  classDef decision fill:#fff9c4,stroke:#fbc02d,color:#e65100;
+  classDef artifact fill:#e8f5e9,stroke:#81c784,color:#1b5e20;
+  classDef output fill:#fff3e0,stroke:#ffb74d,color:#bf360c;
+
+  %% ==============================
+  %% STAGE 1: INITIALIZATION & SETUP
+  %% ==============================
+  %% Grouping initial inputs and system bootstrapping
+  subgraph S1_Init ["Stage 1: Configuration & Initialization"]
+    direction TB
+    
+    subgraph Inputs ["Process Inputs"]
+      %% Fixed syntax error: removed semicolons before style separator
+      I_User([User / Operator]):::inputs
+      I_Files[/"data/raw/*.pdf"/]:::inputs
+      I_Config[/"metadata/ingest_config.yaml"/]:::inputs
+      I_Env[/"Environment variables<br/>(GV_*, QDRANT_*, GOOGLE_API_KEY)"/]:::inputs
+    end
+
+    subgraph Bootstrap ["System Bootstrap"]
+      B_Runner["Run Ingestion Script<br/>(ingest/run_ingestion.py)"]:::process
+      B_Processor["Initialize IngestionProcessor<br/>(ingest/processor.py)"]:::process
+      B_Foundation["PipelineFoundation Setup<br/>(Create dirs: artifacts, assets, logs)"]:::process
+      B_Logger[("Logger Initialized<br/>(+ run_id)")]:::artifact
+    end
+  end
+
+  %% Flow S1
+  I_User --> B_Runner
+  B_Runner --> B_Processor
+  I_Env --> B_Processor
+  I_Config --> B_Foundation
+  B_Processor --> B_Foundation
+  B_Foundation --> B_Logger
+
+  %% ==============================
+  %% STAGE 2: DISCOVERY & DEDUP
+  %% ==============================
+  %% Locating files and checking against existing records
+  subgraph S2_Discovery ["Stage 2: Discovery & Deduplication"]
+    direction TB
+    D_Resolve["Resolve Raw Directory<br/>(GV_INGEST_RAW_DIR or config path)"]:::process
+    D_Find["Find PDFs<br/>(Path.rglob '*.pdf')"]:::process
+    
+    subgraph Dedup ["Deduplication Check (Per-File)"]
+      DD_GenID["Generate doc_id + doc_slug<br/>(DocumentParser)"]:::process
+      DD_LoadIDs[("Load Ingested IDs<br/>(ArtifactStore)")]:::inputs
+      DD_Check{"Already ingested?"}:::decision
+      DD_Skip[/"Skip document"/]:::output
+    end
+  end
+
+  %% Flow S1 -> S2
+  B_Processor --> D_Resolve
+  I_Files -.-> D_Resolve
+  D_Resolve --> D_Find
+  D_Find -->|Begin per-file loop| DD_GenID
+  
+  DD_GenID --> DD_Check
+  DD_LoadIDs --> DD_Check
+  DD_Check -- Yes --> DD_Skip
+  
+  %% ==============================
+  %% STAGE 3: CORE PROCESSING LOOP
+  %% ==============================
+  %% Main document processing, split into parallel text and asset streams
+  subgraph S3_Core ["Stage 3: Core Document Processing (Per-File)"]
+    direction TB
+    
+    %% --- PARSING Start ---
+    P_Parse["DocumentParser.parse_file()"]:::process
+    P_Engine["Docling Engine + OCR<br/>(strategy=auto)"]:::process
+    P_Stream{{"Parsed Element Stream<br/>(Identify Type: Text vs Asset)"}}:::decision
+
+    %% Flow Parsing
+    DD_Check -- No --> P_Parse
+    P_Parse --> P_Engine
+    P_Engine --> P_Stream
+
+    %% --- BRANCH A: TEXT PROCESSING ---
+    %% Handling text elements: Normalization, Quality, Chunking, Embedding
+    subgraph Branch_Text ["Branch A: Text Processing Flow"]
+        direction TB
+        T_Normalize["Text Normalizer<br/>(ingest/enrichment.py)"]:::process
+        
+        subgraph QGate ["Quality Gate"]
+            Q_Scorer["QualityScorer<br/>(word_count, ocr_conf, density)"]:::process
+            Q_Check{"Passes Quality Gates?"}:::decision
+            Q_Drop[("Drop / Ignore Element")]:::output
+        end
+
+        subgraph Chunking ["Chunking & Embedding"]
+            C_Split["RecursiveCharacterTextSplitter<br/>(size=1000, overlap=150)"]:::process
+            C_Meta["Attach Metadata<br/>(page_label, element_id, doc_id)"]:::process
+            E_Sparse["SparseEncoder<br/>(fastembed + SPLADE)"]:::process
+            E_Attach["Attach sparse_vector<br/>(indices + values)"]:::process
+        end
+    end
+    
+    %% Flow Branch A
+    P_Stream -- "type == text" --> T_Normalize
+    T_Normalize --> Q_Scorer
+    Q_Scorer --> Q_Check
+    Q_Check -- No --> Q_Drop
+    Q_Check -- Yes --> C_Split
+    C_Split --> C_Meta
+    C_Meta --> E_Sparse
+    E_Sparse --> E_Attach
+
+    %% --- BRANCH B: ASSET PROCESSING ---
+    %% Handling image/table elements: Extraction, Captioning, Optional Embedding
+    subgraph Branch_Assets ["Branch B: Asset Processing Flow (Images/Tables)"]
+        direction TB
+        A_Register["AssetManager.start_document(doc_id)"]:::process
+        A_RegElement["AssetManager.register_element()"]:::process
+        
+        subgraph Extraction ["Extraction Strategy"]
+            A_Save["AssetManager._save_asset()"]:::process
+            A_TypeCheck{{"Element Type?"}}:::decision
+            A_ImgProc["Image: PyMuPDF crop<br/>(fitz.get_pixmap -> PNG)"]:::process
+            A_TblProc["Table: export_to_html()"]:::process
+            A_ManifestEntry["Create assets_manifest entry<br/>(asset_id, path, page, bbox)"]:::process
+        end
+
+        subgraph Enrichment ["Enrichment Strategy"]
+            EN_Caption["ImageEnricher Captioning<br/>(Model: gemini-2.0-flash)"]:::process
+            EN_JSON[("Caption JSON<br/>(component_name, visual_type, parts)")]:::artifact
+            
+            EN_Enabled{"GV_IMAGE_EMBEDDINGS<br/>enabled?"}:::decision
+            EN_Embed["ImageEmbedder (Optional)<br/>(Model: clip-ViT-B-32)"]:::process
+            EN_Store["Store embedding on asset"]:::process
+        end
+    end
+
+    %% Flow Branch B
+    P_Stream -- "type == image OR table" --> A_Register
+    A_Register --> A_RegElement
+    A_RegElement --> A_Save
+    A_Save --> A_TypeCheck
+    
+    A_TypeCheck -- Image --> A_ImgProc
+    A_TypeCheck -- Table --> A_TblProc
+    A_ImgProc --> A_ManifestEntry
+    A_TblProc --> A_ManifestEntry
+    
+    A_ManifestEntry --> EN_Caption
+    EN_Caption --> EN_JSON
+    EN_JSON --> EN_Enabled
+    
+    EN_Enabled -- Yes --> EN_Embed
+    EN_Embed --> EN_Store
+    EN_Enabled -- No --> EN_Store
+  end
+
+  %% ==============================
+  %% STAGE 4: REGISTRY
+  %% ==============================
+  %% Aggregating processed data into intermediate JSONL artifacts
+  subgraph S4_Registry ["Stage 4: Registry & Artifact Aggregation"]
+    direction TB
+    R_Notes[("Intermediate JSON/JSONL files<br/>accumulated during processing")]:::inputs
+    
+    R_DocReg[("documents.jsonl<br/>(Doc registry)")]:::artifact
+    
+    R_ChunkMap[("element_to_chunks.json<br/>(element_id -> chunk_id)")]:::artifact
+    R_Chunks[("chunks.jsonl<br/>(Text chunks + metadata + vectors)")]:::artifact
+    
+    R_Assets[("assets_manifest.json<br/>(List of assets + enrichment)")]:::artifact
+    R_PageMap[("page_to_assets.json<br/>(Page -> asset_ids)")]:::artifact
+  end
+
+  %% Flow into Registry
+  DD_GenID -->|Valid Doc ID| R_DocReg
+  
+  %% From Text Branch to Registry
+  C_Meta -->|Element/Chunk mapping| R_ChunkMap
+  E_Attach -->|Finalized Chunk Data| R_Chunks
+
+  %% From Asset Branch to Registry
+  A_ManifestEntry -->|Asset Metadata| R_Assets
+  EN_Store -->|Enrichment Data| R_Assets
+  A_ManifestEntry -->|Page Mapping| R_PageMap
+
+  %% ==============================
+  %% STAGE 5: FINALIZE
+  %% ==============================
+  %% Reporting and finalizing the output packages
+  subgraph S5_Finalize ["Stage 5: Finalization & Output"]
+    direction TB
+    F_Reporter["IngestionReporter<br/>(Calculate stats + quality buckets)"]:::process
+    F_ReportJson[("ingest_report.json")]:::artifact
+    F_Finalize["IngestionProcessor.finalize()"]:::process
+    
+    subgraph FinalOutputs ["Final Outputs (Ready for Indexing)"]
+        O_Pkg1[/"chunks.jsonl +<br/>assets_manifest.json"/]:::output
+        O_Pkg2[/"element_to_chunks.json +<br/>page_to_assets.json"/]:::output
+        O_Pkg3[/"documents.jsonl +<br/>ingest_report.json"/]:::output
+    end
+  end
+
+  %% Flow Finalize
+  R_DocReg --> F_Reporter
+  R_ChunkMap --> F_Reporter
+  R_Chunks --> F_Reporter
+  R_Assets --> F_Reporter
+  R_PageMap --> F_Reporter
+  
+  F_Reporter --> F_ReportJson
+  F_ReportJson --> F_Finalize
+  F_Finalize --> FinalOutputs
+  
+  FinalOutputs --- O_Pkg1
+  FinalOutputs --- O_Pkg2
+  FinalOutputs --- O_Pkg3

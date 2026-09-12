@@ -11,4 +11,7 @@ data/cache/*
 !data/processed/.gitkeep
 
 .vscode/
-.idea/
+.idea/node_modules/
+**/node_modules/
+**/.next/
+**/out/

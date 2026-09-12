@@ -1,0 +1,152 @@
+flowchart TD
+  %% GridVision RAG Pipeline (Detailed)
+  %% End-to-end query flow: user -> retrieval -> rerank -> answer -> UI
+
+  subgraph Inputs
+    A1[User Query (text)]
+    A2[User Image (optional)]
+    A3[Chat History (optional)]
+    A4[Environment variables\nGV_*, QDRANT_*, GOOGLE_API_KEY]
+  end
+
+  subgraph API
+    B1[FastAPI\nui/backend/app/main.py]
+    B2[POST /chats/{id}/messages]
+    B3[POST /chats/{id}/messages/stream]
+    B4[POST /chats/{id}/messages/image]
+    B5[Chat DB\nSQLite: data/processed/chat.db]
+  end
+
+  subgraph RAGService
+    C1[RagService\nui/backend/app/rag_service.py]
+    C2[_make_retriever()]
+    C3[_make_image_retriever()]
+    C4[_format_history()\nlast N turns]
+    C5[_format_context()\ncontext budget]
+    C6[_generate_answer()\nGemini or fallback]
+  end
+
+  subgraph Retrieval_Text
+    D1[HybridQdrantRetriever\nrag/retriever.py]
+    D2[Dense model\nSentenceTransformer\nBAAI/bge-m3]
+    D3[Sparse model\nFastEmbed SPLADE]
+    D4[Qdrant search\ncollection=gridvision_chunks]
+    D5[RRF fusion\nRRF_K]
+    D6[Docs ranked (top_k)]
+  end
+
+  subgraph Rerank
+    E1[Reranker\nrag/reranker.py]
+    E2[FlashRank model\nms-marco-MiniLM-L-12-v2]
+    E3{Rerank enabled?}
+    E4[Top-N reranked docs]
+  end
+
+  subgraph AssetJoin
+    F1[AssetResolver\nrag/assets.py]
+    F2[assets_manifest.json\nasset_id, file_path, page_label]
+    F3[Resolve assets by\nlinked_asset_id / element_id / doc+page]
+  end
+
+  subgraph LLM_Path_Default
+    G1[Prompt builder\n_build_prompt()]
+    G2[Context + history + query]
+    G3[Gemini LLM call\nChatGoogleGenerativeAI or genai]
+    G4[Answer text]
+  end
+
+  subgraph LLM_Path_LCEL
+    H1[LCEL chain\nrag/chain.py]
+    H2[Retrieve + rerank branch]
+    H3[Format context + source_map]
+    H4[LLM invoke]
+    H5[Pack raw response]
+  end
+
+  subgraph Assets_Extra
+    I1[wants_visuals() or show_assets]
+    I2[ImageRetriever\nrag/image_retriever.py]
+    I3[CLIP text->image search\nasset collection]
+    I4[Attachments list\nasset_id, url, score]
+  end
+
+  subgraph Outputs
+    J1[AnswerResult\nanswer, sources, attachments, debug]
+    J2[Streamed tokens (SSE)]
+    J3[UI render\nui/web/app/page.tsx]
+  end
+
+  %% Input to API
+  A1 --> B2
+  A1 --> B3
+  A2 --> B4
+  A3 --> B2
+  A3 --> B3
+  A4 --> C1
+
+  %% API to RAGService
+  B2 --> C1
+  B3 --> C1
+  B4 --> C1
+  B2 --> B5
+  B3 --> B5
+  B4 --> B5
+
+  %% Text retrieval path
+  C1 --> C2
+  C2 --> D1
+  D1 --> D2
+  D1 --> D3
+  D1 --> D4
+  D4 --> D5
+  D5 --> D6
+
+  %% Rerank path
+  D6 --> E3
+  E3 -- yes --> E1
+  E1 --> E2
+  E2 --> E4
+  E3 -- no --> E4
+
+  %% Asset join path
+  E4 --> F1
+  F1 --> F2
+  F2 --> F3
+
+  %% History + context
+  C1 --> C4
+  E4 --> C5
+
+  %% LLM path selection
+  C1 --> L1{LCEL enabled\nand Gemini available?}
+  L1 -- yes --> H1
+  L1 -- no --> G1
+
+  %% Default LLM path
+  C5 --> G2
+  C4 --> G2
+  A1 --> G2
+  G2 --> G1
+  G1 --> G3
+  G3 --> G4
+
+  %% LCEL path
+  H1 --> H2
+  H2 --> H3
+  H3 --> H4
+  H4 --> H5
+
+  %% Assets extra (visual intent)
+  A1 --> I1
+  I1 -- yes --> I2
+  I2 --> I3
+  I3 --> I4
+  F3 --> I4
+
+  %% Output packing
+  G4 --> J1
+  H5 --> J1
+  I4 --> J1
+  J1 --> J2
+  J1 --> J3
+
