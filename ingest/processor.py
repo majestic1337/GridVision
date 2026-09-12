@@ -2,6 +2,7 @@ import os
 import logging
 import hashlib
 import time
+import json
 from pathlib import Path
 from typing import List, Dict, Optional, Union
 from datetime import datetime
@@ -9,6 +10,7 @@ from datetime import datetime
 from config.constants import (
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_CHUNK_SIZE,
+    DEFAULT_IMAGE_MODEL,
     DEFAULT_MAX_PARAGRAPH_CHARS,
     DEFAULT_MIN_PARAGRAPH_WORDS,
     DEFAULT_MIN_SCORE,
@@ -27,7 +29,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from .reporting import IngestionReporter
 from .parsing import DocumentParser
-from .enrichment import TextNormalizer, QualityScorer, ImageEnricher
+from .enrichment import TextNormalizer, QualityScorer, ImageEnricher, ImageEmbedder
 from .foundation import PipelineFoundation
 from .storage import ArtifactStore, AssetManager, ChunkRegistry
 
@@ -92,6 +94,14 @@ class IngestionProcessor:
 
         self.parser = DocumentParser()
         self.image_enricher = ImageEnricher()
+        image_embed_conf = self.config.get("image_embeddings", {})
+        env_embed = os.getenv("GV_IMAGE_EMBEDDINGS")
+        if env_embed is None:
+            enabled = bool(image_embed_conf.get("enabled", False))
+        else:
+            enabled = env_embed.lower() not in ("0", "false", "no")
+        model_name = os.getenv("GV_IMAGE_MODEL", image_embed_conf.get("model", DEFAULT_IMAGE_MODEL))
+        self.image_embedder = ImageEmbedder(model_name=model_name, enabled=enabled)
         self.sparse_encoder = SparseEncoder()
         self.asset_manager = AssetManager(
             root_dir=self.foundation.root_dir,
@@ -277,6 +287,19 @@ class IngestionProcessor:
 
                 elif element.type == "image":
                     if linked_asset_id and asset_path and asset_path.exists():
+                        if self.image_embedder.active:
+                            embedding = self.image_embedder.encode(asset_path)
+                            if embedding:
+                                updated = self.asset_manager.update_asset(
+                                    linked_asset_id,
+                                    embedding=embedding,
+                                    embedding_model=self.image_embedder.model_name,
+                                )
+                                if not updated:
+                                    self.logger.warning(
+                                        "[ASSET] embedding update failed (asset_id=%s)",
+                                        linked_asset_id,
+                                    )
                         caption, json_data = self.image_enricher.enrich_image(asset_path)
                         if caption:
                             final_content = TextNormalizer.normalize(caption)
@@ -440,6 +463,57 @@ class IngestionProcessor:
 
     def finalize(self):
         self.reporter.save_report()
+
+    def embed_existing_assets(self, *, overwrite: bool = False) -> int:
+        if not self.image_embedder.active:
+            self.logger.warning(
+                "[EMBED] Image embedder disabled. Set GV_IMAGE_EMBEDDINGS=1 to enable."
+            )
+            return 0
+
+        manifest_path = self.artifacts.artifact_dir / "assets_manifest.json"
+        if not manifest_path.exists():
+            self.logger.warning("[EMBED] assets_manifest.json not found: %s", manifest_path)
+            return 0
+
+        try:
+            assets = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            self.logger.error("[EMBED] Failed to read assets manifest: %s", exc)
+            return 0
+
+        updated = 0
+        for item in assets:
+            file_path = item.get("file_path", "")
+            if not file_path:
+                continue
+            if not str(file_path).lower().endswith((".png", ".jpg", ".jpeg", ".webp")):
+                continue
+            if (not overwrite) and item.get("embedding"):
+                continue
+
+            fpath = Path(file_path)
+            if not fpath.is_absolute():
+                fpath = self.foundation.root_dir / fpath
+            if not fpath.exists():
+                self.logger.warning("[EMBED] Missing asset file: %s", fpath)
+                continue
+
+            embedding = self.image_embedder.encode(fpath)
+            if not embedding:
+                continue
+            item["embedding"] = embedding
+            item["embedding_model"] = self.image_embedder.model_name
+            updated += 1
+
+        try:
+            manifest_path.write_text(json.dumps(assets, indent=2), encoding="utf-8")
+        except Exception as exc:
+            self.logger.error("[EMBED] Failed to write assets manifest: %s", exc)
+            return 0
+
+        self.logger.info("[EMBED] Updated %s asset embeddings.", updated)
+        return updated
 
 def paragraph_chunk_text(
     text: str,

@@ -178,6 +178,15 @@ class AssetManager:
     def current_assets(self) -> List[Dict[str, Any]]:
         return list(self._doc_assets)
 
+    def update_asset(self, asset_id: str, **fields: Any) -> bool:
+        if not asset_id:
+            return False
+        for item in self._doc_assets:
+            if str(item.get("asset_id")) == str(asset_id):
+                item.update(fields)
+                return True
+        return False
+
     def open_pdf(self, raw_path: Path) -> Optional[int]:
         self.page_total = None
         self.pdf_doc = None
