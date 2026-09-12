@@ -98,7 +98,8 @@ class DenseEmbedder:
                 "sentence-transformers is not installed. Install it or disable dense indexing."
             )
         logger.info("Loading dense model: %s", model_name)
-        self.model = SentenceTransformer(model_name)
+        device = os.getenv("GV_DENSE_DEVICE", "cpu")
+        self.model = SentenceTransformer(model_name, device=device)
 
     def dim(self) -> int:
         # robust way: embed 1 short string
@@ -269,7 +270,7 @@ def build_point(
     )
 
     payload = {
-        "chunk_id": str(chunk["chunk_id"]),          # <-- важливо
+        "chunk_id": str(chunk["chunk_id"]),       
         "doc_id": chunk.get("doc_id"),
         "doc_slug": chunk.get("doc_slug"),
         "title": chunk.get("title"),
@@ -282,7 +283,7 @@ def build_point(
         "content_hash": chunk.get("content_hash"),
         "content": chunk.get("content"),
 
-        # --- FLATTENED metadata (for RAG v3.1) ---
+        # --- FLATTENED metadata ---
         "page_label": (chunk.get("metadata") or {}).get("page_label"),
         "page_number": (chunk.get("metadata") or {}).get("page_number"),
         "section": (chunk.get("metadata") or {}).get("section"),
