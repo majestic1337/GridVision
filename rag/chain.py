@@ -8,8 +8,25 @@ from .reranker import Reranker
 from .assets import AssetResolver
 from config.constants import RAG_CONTENT_PREVIEW_CHARS, RAG_CONTEXT_LIMIT_CHARS, RERANK_TOP_N
 
-# --- SETUP ---
-# (Assume clients/models initialized externally and passed here)
+PROMPT_TEMPLATE = """
+    You are GridVision, a technical support assistant.
+    Answer the user query based ONLY on the context below.
+    
+    CHAT HISTORY:
+    {history}
+    
+    RULES:
+    1. Cite sources as [S#] (example: [S1], [S2]).
+    2. If a section mentions a visual aid (figure/table), explicitly refer to it (e.g., "See Figure 2-4").
+    3. If the answer is not supported by the context, say "I don't know."
+    4. Be concise and technical.
+    
+    CONTEXT:
+    {context}
+    
+    QUERY:
+    {query}
+    """.strip()
 
 def build_rag_chain(
     retriever,
@@ -19,6 +36,7 @@ def build_rag_chain(
     *,
     rerank_top_n: int = RERANK_TOP_N,
     return_response: bool = True,
+    include_prompt: bool = False,
 ):
 
     # 1. Retrieval Branch
@@ -68,25 +86,7 @@ def build_rag_chain(
         return {"context": context_str, "source_map": source_map}
 
     # 3. Prompt
-    prompt = ChatPromptTemplate.from_template("""
-    You are GridVision, a technical support assistant.
-    Answer the user query based ONLY on the context below.
-    
-    CHAT HISTORY:
-    {history}
-    
-    RULES:
-    1. Cite sources as [S#] (example: [S1], [S2]).
-    2. If a section mentions a visual aid (figure/table), explicitly refer to it (e.g., "See Figure 2-4").
-    3. If the answer is not supported by the context, say "I don't know."
-    4. Be concise and technical.
-    
-    CONTEXT:
-    {context}
-    
-    QUERY:
-    {query}
-    """)
+    prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
 
     # 4. Response Packing (Converts raw data to Pydantic)
     def pack_response(input_dict):
@@ -128,6 +128,7 @@ def build_rag_chain(
             "assets": input_dict["assets"],
             "context": input_dict["context"],
             "source_map": input_dict.get("source_map", []),
+            "prompt_text": input_dict.get("prompt_text"),
         }
 
     # --- LCEL GRAPH ---
@@ -148,16 +149,24 @@ def build_rag_chain(
             context = lambda x: x["context_bundle"]["context"],
             source_map = lambda x: x["context_bundle"]["source_map"],
         )
-        .assign(
-            ai_response = (
-                {
-                    "context": itemgetter("context"),
-                    "query": itemgetter("query"),
-                    "history": itemgetter("history"),
-                }
-                | prompt 
-                | llm
+    )
+    if include_prompt:
+        main_chain = main_chain.assign(
+            prompt_text = lambda x: PROMPT_TEMPLATE.format(
+                history=x["history"],
+                context=x["context"],
+                query=x["query"],
             )
+        )
+    main_chain = main_chain.assign(
+        ai_response = (
+            {
+                "context": itemgetter("context"),
+                "query": itemgetter("query"),
+                "history": itemgetter("history"),
+            }
+            | prompt 
+            | llm
         )
     )
     

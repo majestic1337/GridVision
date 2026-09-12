@@ -17,11 +17,25 @@ class ImageRetriever:
         collection_name: str,
         model: Any,
         top_k: int = 8,
+        min_score: Optional[float] = None,
     ):
         self.client = client
         self.collection_name = collection_name
         self.model = model
         self.top_k = top_k
+        self.min_score = min_score
+
+    def _filter_hits(self, hits: List[Any]) -> List[Any]:
+        if self.min_score is None:
+            return hits
+        filtered = []
+        for hit in hits:
+            score = getattr(hit, "score", None)
+            if score is None:
+                continue
+            if float(score) >= self.min_score:
+                filtered.append(hit)
+        return filtered
 
     def _encode_text(self, text: str) -> Optional[List[float]]:
         if not text or not self.model:
@@ -58,6 +72,7 @@ class ImageRetriever:
         except Exception as exc:
             logger.warning("Image search (text) failed: %s", exc)
             return []
+        hits = self._filter_hits(hits)
         return [{"score": h.score, "payload": h.payload} for h in hits]
 
     def search_by_image(self, image_bytes: bytes) -> List[Dict[str, Any]]:
@@ -74,4 +89,5 @@ class ImageRetriever:
         except Exception as exc:
             logger.warning("Image search (image) failed: %s", exc)
             return []
+        hits = self._filter_hits(hits)
         return [{"score": h.score, "payload": h.payload} for h in hits]

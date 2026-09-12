@@ -24,11 +24,15 @@ class HybridQdrantRetriever(BaseRetriever):
         
         # 1. Encode Query
         dense_vec = self.dense_model.encode(query).tolist()
+
         # sparse_vec format: SparseVector(indices=[...], values=[...])
         sparse_raw = list(self.sparse_model.embed([query]))[0]
-        sparse_vec = SparseVector(indices=sparse_raw.indices.tolist(), values=sparse_raw.values.tolist())
+        sparse_vec = SparseVector(
+            indices=sparse_raw.indices.tolist(),
+            values=sparse_raw.values.tolist(),
+        )
 
-        # 2. Parallel Search (Synchronous for MVP)
+        # 2. Parallel Search
         dense_hits = self.client.search(
             collection_name=self.collection_name,
             query_vector=(self.dense_vector_name, dense_vec),
