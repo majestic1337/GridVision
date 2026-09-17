@@ -19,6 +19,10 @@ python eval/run_retrieval_eval.py \
   --out eval/retrieval_metrics.json
 ```
 
+The report separates `asset_retrieval` (actual CLIP text-to-asset search) from
+`page_linked_assets` (a diagnostic inferred from text-retrieved pages). Do not
+use the latter as a multimodal retrieval score.
+
 Record results here:
 - Recall@k (k=1/3/5/10): TODO
 - Precision@k (k=1/3/5/10): TODO
@@ -81,4 +85,3 @@ Template:
 2. Re-caption low-quality images and store captions as separate chunks for better retrieval.
 3. Add a lightweight reranker for image/table queries (caption-only rerank) to boost hit rate.
 4. Add query rewriting for ambiguous requests (short or low-entropy queries).
-

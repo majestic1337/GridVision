@@ -171,18 +171,55 @@ def test_retrieval_metrics_computable(golden_redesign):
     except Exception as exc:
         pytest.skip(f"Qdrant not available: {exc}")
 
-    asset_resolver = None
-    if ASSETS_MANIFEST_PATH.exists():
-        from rag.assets import AssetResolver
-        asset_resolver = AssetResolver(ASSETS_MANIFEST_PATH)
-
     summary = module.compute_metrics(
-        golden_redesign,
-        retriever,
-        asset_resolver,
+        queries=golden_redesign,
+        retriever=retriever,
+        chunk_to_element={},
+        page_to_assets={},
+        slug_to_doc_id={},
         k_values=[1, 3, 5],
+        image_retriever=None,
     )
 
     assert "by_k" in summary and summary["by_k"], "Expected metrics summary by_k"
     for k in ("1", "3", "5"):
         assert k in summary["by_k"], f"Missing metrics for k={k}"
+
+
+def test_asset_retrieval_metric_uses_image_retriever():
+    module = _load_retrieval_eval_module()
+
+    class EmptyTextRetriever:
+        def invoke(self, query):
+            return []
+
+    class FakeImageRetriever:
+        def search_by_text(self, query):
+            return [{"score": 0.9, "payload": {"asset_id": "asset-1"}}]
+
+    summary = module.compute_metrics(
+        queries=[
+            {
+                "id": "asset-query",
+                "query": "find the diagram",
+                "expected_pages": [],
+                "expected_retrieval": {
+                    "text_chunk_ids": [],
+                    "asset_ids": ["asset-1"],
+                    "image_ids": [],
+                    "table_ids": [],
+                },
+            }
+        ],
+        retriever=EmptyTextRetriever(),
+        chunk_to_element={},
+        page_to_assets={},
+        slug_to_doc_id={},
+        k_values=[1],
+        image_retriever=FakeImageRetriever(),
+    )
+
+    assert summary["by_k"]["1"]["asset_retrieval"] == {
+        "hit_rate": 1.0,
+        "queries": 1,
+    }

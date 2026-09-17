@@ -1,5 +1,6 @@
 import json
 import re
+from io import BytesIO
 from dotenv import load_dotenv
 from datetime import datetime, timezone
 from pathlib import Path
@@ -9,7 +10,8 @@ from uuid import uuid4
 from fastapi import FastAPI, HTTPException, Request, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse, HTMLResponse
-from pydantic import BaseModel
+from PIL import Image, UnidentifiedImageError
+from pydantic import BaseModel, Field
 
 from . import db
 from .rag_service import RagService
@@ -21,7 +23,7 @@ class ChatCreate(BaseModel):
 
 
 class MessageCreate(BaseModel):
-    content: str
+    content: str = Field(min_length=1, max_length=4_000)
     show_assets: Optional[bool] = None
     use_lcel: Optional[bool] = None
 
@@ -186,12 +188,51 @@ def _trim_title(content: str, max_len: int = 60) -> str:
 
 
 _CYRILLIC_RE = re.compile(r"[\u0400-\u04FF]")
+_UPLOAD_NAME_RE = re.compile(r"^[a-f0-9]{32}\.(?:jpg|png|webp)$")
+_IMAGE_FORMAT_SUFFIXES = {"JPEG": ".jpg", "PNG": ".png", "WEBP": ".webp"}
+_MAX_UPLOAD_BYTES = 10 * 1024 * 1024
+_MAX_UPLOAD_PIXELS = 40_000_000
 
 
 def _is_english_query(text: str) -> bool:
     if _CYRILLIC_RE.search(text):
         return False
     return True
+
+
+def _validate_query(text: str, *, allow_empty: bool = False) -> str:
+    content = text.strip()
+    if not content and not allow_empty:
+        raise HTTPException(status_code=400, detail="Message content is empty")
+    if len(content) > 4_000:
+        raise HTTPException(status_code=413, detail="Message content exceeds 4,000 characters")
+    if content and not _is_english_query(content):
+        raise HTTPException(status_code=400, detail="Only English queries are allowed.")
+    return content
+
+
+async def _read_valid_image_upload(file: UploadFile) -> tuple[bytes, str]:
+    image_bytes = await file.read(_MAX_UPLOAD_BYTES + 1)
+    if not image_bytes:
+        raise HTTPException(status_code=400, detail="Empty image upload")
+    if len(image_bytes) > _MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=413, detail="Image exceeds 10 MiB")
+
+    try:
+        with Image.open(BytesIO(image_bytes)) as image:
+            image.verify()
+        with Image.open(BytesIO(image_bytes)) as image:
+            if image.width * image.height > _MAX_UPLOAD_PIXELS:
+                raise HTTPException(status_code=413, detail="Image dimensions are too large")
+            suffix = _IMAGE_FORMAT_SUFFIXES.get(image.format or "")
+    except HTTPException:
+        raise
+    except (UnidentifiedImageError, OSError):
+        raise HTTPException(status_code=400, detail="Unsupported or invalid image")
+
+    if suffix is None:
+        raise HTTPException(status_code=400, detail="Only JPEG, PNG, and WebP images are allowed")
+    return image_bytes, suffix
 
 
 def _message_to_response(message: db.MessageRecord) -> MessageResponse:
@@ -254,11 +295,7 @@ def post_message(chat_id: str, payload: MessageCreate) -> Dict[str, Any]:
     if not chat:
         raise HTTPException(status_code=404, detail="Chat not found")
 
-    content = payload.content.strip()
-    if not content:
-        raise HTTPException(status_code=400, detail="Message content is empty")
-    if not _is_english_query(content):
-        raise HTTPException(status_code=400, detail="Only English queries are allowed.")
+    content = _validate_query(payload.content)
 
     title = _trim_title(content)
     db.update_chat_title_if_empty(settings.db_path, chat_id, title)
@@ -295,11 +332,7 @@ async def stream_message(chat_id: str, payload: MessageCreate, request: Request)
     if not chat:
         raise HTTPException(status_code=404, detail="Chat not found")
 
-    content = payload.content.strip()
-    if not content:
-        raise HTTPException(status_code=400, detail="Message content is empty")
-    if not _is_english_query(content):
-        raise HTTPException(status_code=400, detail="Only English queries are allowed.")
+    content = _validate_query(payload.content)
 
     title = _trim_title(content)
     db.update_chat_title_if_empty(settings.db_path, chat_id, title)
@@ -364,20 +397,12 @@ async def post_image_message(
     if not chat:
         raise HTTPException(status_code=404, detail="Chat not found")
 
-    text = content.strip()
-    if text and not _is_english_query(text):
-        raise HTTPException(status_code=400, detail="Only English queries are allowed.")
+    text = _validate_query(content, allow_empty=True)
 
     title = _trim_title(text or "Image prompt")
     db.update_chat_title_if_empty(settings.db_path, chat_id, title)
 
-    image_bytes = await file.read()
-    if not image_bytes:
-        raise HTTPException(status_code=400, detail="Empty image upload")
-
-    suffix = Path(file.filename or "").suffix.lower()
-    if not suffix:
-        suffix = ".png"
+    image_bytes, suffix = await _read_valid_image_upload(file)
     upload_id = uuid4().hex
     upload_name = f"{upload_id}{suffix}"
     upload_path = uploads_dir / upload_name
@@ -431,13 +456,23 @@ def get_asset(asset_id: str):
         raise HTTPException(status_code=404, detail="Asset not found")
     if path.suffix.lower() == ".html":
         html = path.read_text(encoding="utf-8", errors="replace")
-        return HTMLResponse(_wrap_table_html(html))
+        return HTMLResponse(
+            _wrap_table_html(html),
+            headers={
+                "Content-Security-Policy": (
+                    "sandbox; default-src 'none'; style-src 'unsafe-inline'; "
+                    "img-src 'self' data:"
+                )
+            },
+        )
     return FileResponse(path)
 
 
 @app.get("/uploads/{filename}")
 def get_upload(filename: str):
+    if not _UPLOAD_NAME_RE.fullmatch(filename):
+        raise HTTPException(status_code=404, detail="Upload not found")
     path = uploads_dir / filename
-    if not path.exists():
+    if not path.is_file():
         raise HTTPException(status_code=404, detail="Upload not found")
     return FileResponse(path)
