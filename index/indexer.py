@@ -212,6 +212,21 @@ def iter_jsonl_with_skip(path: Path, skip_lines: int) -> Iterable[Dict[str, Any]
             yield json.loads(line)
 
 
+def collect_current_ids(chunk_file: Path) -> Dict[str, Set[str]]:
+    """Return the complete desired point-id set for every document in an artifact file."""
+    current_ids: Dict[str, Set[str]] = {}
+    with open(chunk_file, "r", encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            chunk = json.loads(line)
+            doc_id = str(chunk.get("doc_id", ""))
+            chunk_id = str(chunk.get("chunk_id", ""))
+            if doc_id and chunk_id:
+                current_ids.setdefault(doc_id, set()).add(chunk_id)
+    return current_ids
+
+
 def qdrant_doc_filter(doc_id: str) -> Filter:
     return Filter(
         must=[
@@ -347,8 +362,8 @@ def index_chunks(cfg: IndexerConfig) -> None:
     else:
         sp = Savepoint()
 
-    # We keep "current ids per doc" to support prune after upserts
-    current_ids: Dict[str, Set[str]] = {}
+    # Pruning must see the whole artifact, not only records after a savepoint.
+    current_ids = collect_current_ids(cfg.chunk_file) if cfg.do_prune else {}
     expected_total = sp.upserted  # cumulative already-upserted count
 
     batch_texts: List[str] = []
@@ -367,12 +382,6 @@ def index_chunks(cfg: IndexerConfig) -> None:
         processed_lines += 1
         global_lines += 1
         expected_total += 1
-
-        doc_id = str(chunk.get("doc_id", ""))
-        cfg.do_prune = False
-
-        if cfg.do_prune and doc_id:
-            current_ids.setdefault(doc_id, set()).add(str(chunk["chunk_id"]))
 
         text = chunk.get("content") or ""
         batch_texts.append(text)

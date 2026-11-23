@@ -7,3 +7,6 @@ fastembed
 pillow==10.3.0
 langchain-core
 langchain-google-genai
+docling
+flashrank
+python-multipart

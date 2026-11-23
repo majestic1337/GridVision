@@ -342,6 +342,7 @@ class RagService:
             dense_model=_get_dense_model(self.settings.dense_model),
             sparse_model=_get_sparse_model(self.settings.sparse_model),
             top_k=self.settings.wide_k,
+            rrf_k=self.settings.rrf_k,
             dense_vector_name=self.settings.dense_vector,
             sparse_vector_name=self.settings.sparse_vector,
         )
@@ -476,6 +477,8 @@ class RagService:
                     self.asset_resolver,
                     llm,
                     rerank_top_n=self.settings.rerank_top_n,
+                    rerank_enabled=self.settings.use_rerank,
+                    context_limit_chars=self.settings.context_budget,
                     return_response=False,
                     include_prompt=_DEBUG_PROMPT,
                 )
@@ -517,6 +520,8 @@ class RagService:
             answer_text = self._generate_answer(prompt)
             docs = reranked
             prompt_text = prompt
+            if not self._passes_min_score(docs):
+                answer_text = "I don't know."
 
         doc_ids = {str((d.metadata or {}).get("doc_id")) for d in docs if (d.metadata or {}).get("doc_id")}
         doc_slugs = {str((d.metadata or {}).get("doc_slug")) for d in docs if (d.metadata or {}).get("doc_slug")}

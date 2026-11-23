@@ -576,6 +576,7 @@ export default function Home() {
                                 src={url}
                                 title={att.asset_id}
                                 className="attachment-frame"
+                                sandbox=""
                               />
                             ) : isImage ? (
                               <img
@@ -628,10 +629,11 @@ export default function Home() {
                               }`}
                             >
                               {isHtml ? (
-                                <iframe
-                                  src={url}
-                                  title={att.asset_id}
-                                  className="attachment-frame"
+                              <iframe
+                                src={url}
+                                title={att.asset_id}
+                                className="attachment-frame"
+                                sandbox=""
                                 />
                               ) : isImage ? (
                                 <img

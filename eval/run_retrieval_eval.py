@@ -15,6 +15,7 @@ from sentence_transformers import SentenceTransformer
 
 from config import constants as const
 from config.runtime import get_runtime_config
+from rag.image_retriever import ImageRetriever
 from rag.retriever import HybridQdrantRetriever
 
 
@@ -105,8 +106,23 @@ def build_retriever(top_k: int) -> HybridQdrantRetriever:
         dense_model=_get_model_dense(os.getenv("GV_DENSE_MODEL", const.DEFAULT_DENSE_MODEL)),
         sparse_model=_get_model_sparse(os.getenv("GV_SPARSE_MODEL", const.DEFAULT_SPARSE_MODEL)),
         top_k=top_k,
+        rrf_k=int(os.getenv("GV_RRF_K", str(const.RRF_K))),
         dense_vector_name=os.getenv(const.ENV_DENSE_VECTOR, runtime.dense_vector),
         sparse_vector_name=os.getenv(const.ENV_SPARSE_VECTOR, runtime.sparse_vector),
+    )
+
+
+def build_image_retriever(top_k: int) -> ImageRetriever:
+    return ImageRetriever(
+        client=QdrantClient(
+            url=os.getenv("QDRANT_URL", const.DEFAULT_QDRANT_URL),
+            api_key=os.getenv("QDRANT_API_KEY"),
+            timeout=const.QDRANT_TIMEOUT_SECONDS,
+        ),
+        collection_name=os.getenv(const.ENV_ASSET_COLLECTION, const.DEFAULT_ASSET_COLLECTION),
+        model=_get_model_dense(os.getenv(const.ENV_IMAGE_MODEL, const.DEFAULT_IMAGE_MODEL)),
+        top_k=top_k,
+        min_score=float(os.getenv(const.ENV_IMAGE_MIN_SCORE, str(const.DEFAULT_IMAGE_MIN_SCORE))),
     )
 
 
@@ -119,6 +135,18 @@ def verify_qdrant(retriever: HybridQdrantRetriever) -> None:
         raise RuntimeError(
             f"Qdrant collection not found: {retriever.collection_name}. "
             "Check QDRANT_COLLECTION or ingest/index first."
+        )
+
+
+def verify_image_qdrant(retriever: ImageRetriever) -> None:
+    try:
+        ok = retriever.client.collection_exists(retriever.collection_name)
+    except Exception as exc:
+        raise RuntimeError("Qdrant is not reachable. Start Qdrant or set QDRANT_URL.") from exc
+    if not ok:
+        raise RuntimeError(
+            f"Qdrant asset collection not found: {retriever.collection_name}. "
+            "Run index/assets_indexer.py after embedding assets."
         )
 
 
@@ -250,6 +278,7 @@ def compute_metrics(
     page_to_assets: Dict[str, List[str]],
     slug_to_doc_id: Dict[str, str],
     k_values: List[int],
+    image_retriever: Optional[ImageRetriever] = None,
 ) -> Dict[str, Any]:
     max_k = max(k_values)
     summary: Dict[str, Any] = {"per_query": [], "by_k": {}}
@@ -272,9 +301,12 @@ def compute_metrics(
             "page_precision_sum": 0.0,
             "page_mrr_sum": 0.0,
             "page_count": 0,
-            # assets hit (doc-linked via page_to_assets)
-            "asset_hit_sum": 0.0,
-            "asset_count": 0,
+            # assets implied by text-retrieved pages; diagnostic only
+            "page_linked_asset_hit_sum": 0.0,
+            "page_linked_asset_count": 0,
+            # direct CLIP text-to-asset retrieval
+            "asset_retrieval_hit_sum": 0.0,
+            "asset_retrieval_count": 0,
         }
         for k in k_values
     }
@@ -288,6 +320,12 @@ def compute_metrics(
 
         expected_text_chunks = safe_set(expected.get("text_chunk_ids"))
         expected_assets = safe_set(expected.get("asset_ids")) | safe_set(expected.get("image_ids")) | safe_set(expected.get("table_ids"))
+        image_hits = image_retriever.search_by_text(query) if expected_assets and image_retriever else []
+        retrieved_asset_ids = [
+            str((hit.get("payload") or {}).get("asset_id"))
+            for hit in image_hits
+            if (hit.get("payload") or {}).get("asset_id")
+        ]
 
         # Convert expected text chunks -> expected elements (relaxed)
         expected_elements = {chunk_to_element.get(cid, cid) for cid in expected_text_chunks}
@@ -341,6 +379,7 @@ def compute_metrics(
             "retrieved_top_k_chunks": retrieved_chunk_ids[:max_k],
             "retrieved_top_k_elements": retrieved_elements[:max_k],
             "retrieved_top_k_page_keys": retrieved_page_keys[:max_k],
+            "retrieved_top_k_asset_ids": retrieved_asset_ids[:max_k],
         }
 
         for k in k_values:
@@ -409,21 +448,37 @@ def compute_metrics(
             else:
                 page_recall = page_precision = page_mrr = None
 
-            # ---- Asset hit via page_to_assets (doc-linked)
+            # ---- Asset hit inferred from text-retrieved pages (diagnostic)
             if expected_assets:
                 got_assets = assets_up_to_k(k)
-                asset_hit = 1.0 if (expected_assets & got_assets) else 0.0
-                totals[k]["asset_hit_sum"] += asset_hit
-                totals[k]["asset_count"] += 1
+                page_linked_asset_hit = 1.0 if (expected_assets & got_assets) else 0.0
+                totals[k]["page_linked_asset_hit_sum"] += page_linked_asset_hit
+                totals[k]["page_linked_asset_count"] += 1
             else:
                 got_assets = set()
-                asset_hit = None
+                page_linked_asset_hit = None
+
+            # ---- Actual asset-vector retrieval
+            if expected_assets and image_retriever:
+                top_asset_ids = set(retrieved_asset_ids[:k])
+                asset_retrieval_hit = 1.0 if (expected_assets & top_asset_ids) else 0.0
+                totals[k]["asset_retrieval_hit_sum"] += asset_retrieval_hit
+                totals[k]["asset_retrieval_count"] += 1
+            else:
+                asset_retrieval_hit = None
 
             per_query.setdefault("metrics", {})[f"k_{k}"] = {
                 "relaxed_text": {"recall": recall, "precision": precision, "mrr": mrr},
                 "strict_text": {"recall": strict_recall, "precision": strict_precision, "mrr": strict_mrr},
                 "pages": {"recall": page_recall, "precision": page_precision, "mrr": page_mrr},
-                "assets": {"hit": asset_hit, "retrieved_asset_ids": sorted(got_assets) if expected_assets else []},
+                "page_linked_assets": {
+                    "hit": page_linked_asset_hit,
+                    "retrieved_asset_ids": sorted(got_assets) if expected_assets else [],
+                },
+                "asset_retrieval": {
+                    "hit": asset_retrieval_hit,
+                    "retrieved_asset_ids": retrieved_asset_ids[:k],
+                },
             }
 
         summary["per_query"].append(per_query)
@@ -433,7 +488,8 @@ def compute_metrics(
         tc = totals[k]["text_count"]
         stc = totals[k]["strict_text_count"]
         pc = totals[k]["page_count"]
-        ac = totals[k]["asset_count"]
+        plac = totals[k]["page_linked_asset_count"]
+        arc = totals[k]["asset_retrieval_count"]
 
         summary["by_k"][str(k)] = {
             "relaxed_text": {
@@ -454,9 +510,13 @@ def compute_metrics(
                 "mrr": totals[k]["page_mrr_sum"] / pc if pc else None,
                 "queries": pc,
             },
-            "assets": {
-                "hit_rate": totals[k]["asset_hit_sum"] / ac if ac else None,
-                "queries": ac,
+            "page_linked_assets": {
+                "hit_rate": totals[k]["page_linked_asset_hit_sum"] / plac if plac else None,
+                "queries": plac,
+            },
+            "asset_retrieval": {
+                "hit_rate": totals[k]["asset_retrieval_hit_sum"] / arc if arc else None,
+                "queries": arc,
             },
         }
 
@@ -470,15 +530,16 @@ def compute_metrics(
 # CLI
 # ----------------------------
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run retrieval evaluation over a gold dataset (relaxed by element + page-linked assets).")
+    parser = argparse.ArgumentParser(description="Run text and image retrieval evaluation over a gold dataset.")
 
-    parser.add_argument("--queries", default="/mnt/data/eval_set_30.jsonl", help="Path to queries JSON/JSONL.")
+    parser.add_argument("--queries", default="eval/golden_redesign.json", help="Path to queries JSON/JSONL.")
     parser.add_argument("--k", nargs="+", type=int, default=[1, 3, 5, 10], help="k values to evaluate.")
     parser.add_argument("--out", default="eval/retrieval_metrics.json", help="Output JSON path.")
 
-    parser.add_argument("--golden-redesign", default="/mnt/data/golden_redesign.json", help="Path to golden_redesign.json (for doc_slug->doc_id mapping).")
-    parser.add_argument("--element-to-chunks", default="/mnt/data/element_to_chunks.json", help="Path to element_to_chunks.json (for relaxed element matching).")
-    parser.add_argument("--page-to-assets", default="/mnt/data/page_to_assets.json", help="Path to page_to_assets.json (for asset evaluation).")
+    parser.add_argument("--golden-redesign", default="eval/golden_redesign.json", help="Path to golden_redesign.json (for doc_slug->doc_id mapping).")
+    parser.add_argument("--element-to-chunks", default="data/processed/artifacts/element_to_chunks.json", help="Path to element_to_chunks.json (for relaxed element matching).")
+    parser.add_argument("--page-to-assets", default="data/processed/artifacts/page_to_assets.json", help="Path to page_to_assets.json (for page-linked asset diagnostics).")
+    parser.add_argument("--skip-asset-eval", action="store_true", help="Skip direct CLIP text-to-asset evaluation.")
 
     args = parser.parse_args()
 
@@ -511,6 +572,10 @@ def main() -> None:
     # retriever
     retriever = build_retriever(top_k=max(k_values))
     verify_qdrant(retriever)
+    image_retriever = None
+    if not args.skip_asset_eval:
+        image_retriever = build_image_retriever(top_k=max(k_values))
+        verify_image_qdrant(image_retriever)
 
     summary = compute_metrics(
         queries=queries,
@@ -519,6 +584,7 @@ def main() -> None:
         page_to_assets=page_to_assets,
         slug_to_doc_id=slug_to_doc_id,
         k_values=k_values,
+        image_retriever=image_retriever,
     )
 
     out_path = Path(args.out)

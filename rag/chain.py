@@ -35,6 +35,8 @@ def build_rag_chain(
     llm,
     *,
     rerank_top_n: int = RERANK_TOP_N,
+    rerank_enabled: bool = True,
+    context_limit_chars: int = RAG_CONTEXT_LIMIT_CHARS,
     return_response: bool = True,
     include_prompt: bool = False,
 ):
@@ -45,14 +47,15 @@ def build_rag_chain(
         # Step A: Hybrid Search (Top-50)
         initial_docs = retriever.invoke(query)
         # Step B: Rerank (Top-5)
-        final_docs = reranker.rerank(query, initial_docs, top_n=rerank_top_n)
-        return final_docs
+        if rerank_enabled and reranker.active:
+            return reranker.rerank(query, initial_docs, top_n=rerank_top_n)
+        return initial_docs[:rerank_top_n]
 
     # 2. Context Formatting (With Budget)
     def format_context(docs):
         context_str = ""
         total_chars = 0
-        limit = RAG_CONTEXT_LIMIT_CHARS  # Budget
+        limit = context_limit_chars
         source_map = []
         
         for idx, doc in enumerate(docs, 1):
@@ -114,7 +117,7 @@ def build_rag_chain(
             assets=assets,
             debug=DebugInfo(
                 retrieval_count=len(docs),
-                rerank_used=True,
+                rerank_used=rerank_enabled and reranker.active,
                 context_size_chars=len(input_dict["context"])
             )
         )

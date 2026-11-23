@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import Any, List, Optional
 from langchain_core.retrievers import BaseRetriever
 from langchain_core.documents import Document
 from langchain_core.callbacks import CallbackManagerForRetrieverRun
@@ -15,11 +15,12 @@ class HybridQdrantRetriever(BaseRetriever):
     dense_model: Any  # SentenceTransformer/BGE-M3
     sparse_model: Any # FastEmbed/Splade
     top_k: int = RETRIEVER_TOP_K   # Wide net for RRF
+    rrf_k: int = RRF_K
     dense_vector_name: str = _RUNTIME.dense_vector
     sparse_vector_name: str = _RUNTIME.sparse_vector
     
     def _get_relevant_documents(
-        self, query: str, *, run_manager: CallbackManagerForRetrieverRun = None
+        self, query: str, *, run_manager: Optional[CallbackManagerForRetrieverRun] = None
     ) -> List[Document]:
         
         # 1. Encode Query
@@ -52,7 +53,7 @@ class HybridQdrantRetriever(BaseRetriever):
         # 3. RRF Fusion (Reciprocal Rank Fusion)
         # score = 1 / (k + rank)
         rrf_map = {}
-        k = RRF_K
+        k = self.rrf_k
         
         def merge_hits(hits, weight=1.0):
             for rank, hit in enumerate(hits):

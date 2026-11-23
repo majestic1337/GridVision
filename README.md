@@ -5,23 +5,10 @@ the right visuals (images + tables) into one answer.
 
 ---
 
-## Quick tour (add your visuals here)
+## Architecture
 
-![UI hero screenshot](docs/images/ui-hero.png)
-<!-- TODO: Replace with a real UI screenshot -->
-
-![Retrieval + sources panel](docs/images/ui-sources.png)
-<!-- TODO: Show sources + attachments -->
-
-![Architecture diagram](docs/images/architecture.png)
-<!-- TODO: Add a simple architecture diagram -->
-
-![Ingestion pipeline](docs/images/ingestion-pipeline.png)
-<!-- TODO: Optional: flow of PDF -> chunks -> Qdrant -->
-
-Demo clip (GIF/MP4):
-- [Demo video](docs/media/demo.mp4)
-<!-- TODO: Replace with a short demo clip -->
+- [Ingestion pipeline](docs/ingest_pipeline.mmd)
+- [RAG pipeline](docs/rag_pipeline.mmd)
 
 ---
 
@@ -59,8 +46,7 @@ docker run --rm -p 6333:6333 -p 6334:6334 qdrant/qdrant
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements.txt
-python -m pip install -r ui/backend/requirements.txt
+python -m pip install -r requirements-dev.txt
 ```
 
 ### 3) Frontend deps
@@ -69,7 +55,13 @@ cd ui/web
 npm install
 ```
 
-### 4) Configure environment
+### 4) Run tests
+```bash
+cd ../..
+pytest -q
+```
+
+### 5) Configure environment
 Create a `.env` (or export env vars in your shell):
 
 ```bash
@@ -83,7 +75,7 @@ export GV_IMAGE_EMBEDDINGS=1
 export GV_IMAGE_MODEL="clip-ViT-B-32"
 ```
 
-### 5) Ingest PDFs
+### 6) Ingest PDFs
 Place your PDFs in `data/raw/`, then:
 ```bash
 python ingest/run_ingestion.py
@@ -94,7 +86,7 @@ Optional: backfill image embeddings for existing assets:
 python ingest/run_ingestion.py --embed-assets
 ```
 
-### 6) Build indexes
+### 7) Build indexes
 Text chunks:
 ```bash
 python index/indexer.py
@@ -105,12 +97,12 @@ Assets (images/tables):
 python index/assets_indexer.py
 ```
 
-### 7) Run the backend
+### 8) Run the backend
 ```bash
 uvicorn ui.backend.app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### 8) Run the UI
+### 9) Run the UI
 ```bash
 cd ui/web
 npm run dev
@@ -140,14 +132,16 @@ Open the UI in your browser and ask:
 Retrieval metrics over a gold set:
 ```bash
 python eval/run_retrieval_eval.py \
-  --queries eval/golden_eval_50.jsonl \
+  --queries eval/golden_redesign.json \
   --k 1 3 5 10 \
   --out eval/retrieval_metrics.json
 ```
 
-Add answer-level evaluation here:
-- [Evaluation report](docs/eval/answer-quality.md)
-<!-- TODO: Add faithfulness rubric + error analysis -->
+This evaluates hybrid text retrieval and direct CLIP text-to-asset retrieval. It
+requires both Qdrant collections. Use `--skip-asset-eval` only when working on
+the text index alone.
+
+Answer evaluation rubric: [docs/eval/answer-quality.md](docs/eval/answer-quality.md).
 
 ---
 
@@ -178,6 +172,8 @@ Useful:
 - `GV_ASSETS_ROOT` (override asset root path)
 - `GV_MAX_ASSETS` (default: 6)
 - `GV_IMAGE_TOPK` (default: 8)
+- `GV_IMAGE_MIN_SCORE` (default: `0.0`)
+- `GV_RRF_K` (default: `60`)
 
 UI:
 - `NEXT_PUBLIC_API_URL` (default: http://localhost:8000)
@@ -206,16 +202,6 @@ ui/web/        # Next.js frontend
 - If you skip image embeddings, image retrieval will be limited to linked assets.
 - `image_embeddings.enabled` is `false` in `metadata/ingest_config.yaml` by default.
   Set `GV_IMAGE_EMBEDDINGS=1` or flip the config to enable CLIP embeddings.
-
----
-
-## Add your flair (placeholders)
-
-- [Project logo](docs/images/logo.png)
-- [System diagram](docs/images/architecture.png)
-- [Dataset snapshot](docs/images/dataset.png)
-- [Evaluation dashboard](docs/images/eval-dashboard.png)
-- [Short demo](docs/media/demo.mp4)
 
 ---
 
