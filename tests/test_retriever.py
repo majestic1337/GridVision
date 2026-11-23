@@ -65,8 +65,14 @@ def test_retriever_uses_named_vectors_and_sparse_vector():
     sparse_call = client.calls[1]
 
     assert dense_call[1][0] == retriever.dense_vector_name
-    assert sparse_call[1][0] == retriever.sparse_vector_name
-    assert isinstance(sparse_call[1][1], SparseVector)
+    sparse_query = sparse_call[1]
+    if isinstance(sparse_query, tuple):
+        sparse_name, sparse_vector = sparse_query
+    else:
+        sparse_name = sparse_query.name
+        sparse_vector = sparse_query.vector
+    assert sparse_name == retriever.sparse_vector_name
+    assert isinstance(sparse_vector, SparseVector)
 
     assert docs[0].page_content == "hello"
     assert "rrf_score" in docs[0].metadata
