@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           uv venv
-          uv pip sync requirements.lock requirements-dev.txt
+          uv pip sync requirements.lock
 
       - name: Run Python tests
         run: .venv/bin/python -m pytest -q
