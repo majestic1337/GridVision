@@ -47,10 +47,18 @@ class PipelineFoundation:
         log_dir = self.root_dir / self.config["paths"].get("logs", "data/logs")
         log_file = log_dir / f"{self.run_id}.log"
 
-        logger = logging.getLogger(f"GridVision_{self.run_id}")
+        # Configure one package logger so child loggers from parsing, enrichment,
+        # processing, and reporting all reach the same run log.
+        logger = logging.getLogger("gridvision.ingest")
 
         logger.setLevel(logging.INFO)
-        logger.propagate = False 
+        logger.propagate = False
+
+        # A process may create more than one processor (notably in tests). Avoid
+        # retaining handlers from an earlier run and duplicating every message.
+        for handler in list(logger.handlers):
+            logger.removeHandler(handler)
+            handler.close()
 
         formatter = logging.Formatter(
             '%(asctime)s | %(levelname)-8s | %(module)s | %(message)s',
@@ -82,4 +90,4 @@ if __name__ == "__main__":
         logger.info("Foundation stage complete.")
     except Exception as e:
         logging.basicConfig(level=logging.ERROR)
-        logging.getLogger("GridVision_Foundation").exception("Critical Setup Error")
+        logging.getLogger("gridvision.ingest.foundation").exception("Critical Setup Error")

@@ -4,6 +4,7 @@ import json
 import hashlib
 import time
 import logging
+import socket
 from typing import Dict, List, Optional, Tuple, Any
 from pathlib import Path
 from dotenv import load_dotenv
@@ -39,6 +40,13 @@ from google.api_core import exceptions as google_exceptions
 from PIL import Image
 
 try:
+    from requests.exceptions import ConnectionError as RequestsConnectionError
+    from requests.exceptions import Timeout as RequestsTimeout
+except ImportError:
+    RequestsConnectionError = None
+    RequestsTimeout = None
+
+try:
     from sentence_transformers import SentenceTransformer
     ST_AVAILABLE = True
 except Exception:
@@ -46,7 +54,7 @@ except Exception:
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env") 
 
-logger = logging.getLogger("GridVision_Enrichment")
+logger = logging.getLogger("gridvision.ingest.enrichment")
 
 class TextNormalizer:
     @staticmethod
@@ -141,9 +149,11 @@ class ImageEnricher:
         api_key: Optional[str] = None,
         model_name: str = DEFAULT_GEMINI_MODEL,
         max_retries: int = IMAGE_ENRICH_MAX_RETRIES,
+        backoff_base_seconds: float = RATE_LIMIT_BACKOFF_BASE_SECONDS,
     ):
         self.api_key = api_key or os.getenv("GOOGLE_API_KEY")
-        self.max_retries = max_retries
+        self.max_retries = max(0, max_retries)
+        self.backoff_base_seconds = max(0.0, backoff_base_seconds)
         
         if not self.api_key:
             logger.warning("GOOGLE_API_KEY missing. Enrichment disabled.")
@@ -262,19 +272,49 @@ class ImageEnricher:
                     response = self.model.generate_content([prompt, img])
                 return (response.text or "").strip()
 
-            except google_exceptions.ResourceExhausted:
-                wait = self._rate_limit_backoff_seconds(attempt)
-                logger.warning(f"Rate limit. Waiting {wait}s...")
-                time.sleep(wait)
-
             except Exception as e:
-                logger.error(f"Enrichment failed for {image_path.name}: {e}")
-                break
+                if not self._is_retryable_exception(e):
+                    logger.error(f"Enrichment failed for {image_path.name}: {e}")
+                    break
+
+                if attempt + 1 >= self.max_retries:
+                    logger.error(
+                        f"Enrichment exhausted retries for {image_path.name}: {e}"
+                    )
+                    break
+
+                wait = self._rate_limit_backoff_seconds(attempt)
+                logger.warning(
+                    f"Transient enrichment failure for {image_path.name}; "
+                    f"retrying in {wait}s: {e}"
+                )
+                time.sleep(wait)
 
         return None
 
-    def _rate_limit_backoff_seconds(self, attempt: int) -> int:
-        return (2**attempt) * RATE_LIMIT_BACKOFF_BASE_SECONDS
+    @staticmethod
+    def _is_retryable_exception(error: Exception) -> bool:
+        retryable_google_errors = tuple(
+            error_type
+            for name in (
+                "Aborted",
+                "DeadlineExceeded",
+                "InternalServerError",
+                "ResourceExhausted",
+                "ServiceUnavailable",
+                "TooManyRequests",
+            )
+            if isinstance((error_type := getattr(google_exceptions, name, None)), type)
+        )
+        network_errors = [TimeoutError, socket.timeout, ConnectionError]
+        if isinstance(RequestsConnectionError, type):
+            network_errors.append(RequestsConnectionError)
+        if isinstance(RequestsTimeout, type):
+            network_errors.append(RequestsTimeout)
+        return isinstance(error, retryable_google_errors + tuple(network_errors))
+
+    def _rate_limit_backoff_seconds(self, attempt: int) -> float:
+        return (2**attempt) * self.backoff_base_seconds
 
     def _parse_and_validate_enrichment(self, raw_text: str, image_path: Path) -> Optional[Dict]:
         try:

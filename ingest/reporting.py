@@ -2,7 +2,7 @@ import json
 import logging
 from pathlib import Path
 from typing import Dict, List, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from dataclasses import dataclass, field, asdict
 
 from config.constants import (
@@ -11,7 +11,7 @@ from config.constants import (
     SCORE_BUCKETS,
     SCORE_BUCKET_ELSE,
 )
-logger = logging.getLogger("GridVision_Reporter")
+logger = logging.getLogger("gridvision.ingest.reporting")
 
 @dataclass
 class QualityStats:
@@ -60,6 +60,7 @@ class RunStats:
     total_assets: int = 0
     quality: QualityStats = field(default_factory=QualityStats)
     warnings: List[str] = field(default_factory=list)
+    failed_documents: List[Dict[str, str]] = field(default_factory=list)
 
 class IngestionReporter:
     def __init__(
@@ -73,7 +74,7 @@ class IngestionReporter:
         self.root_dir = root_dir
         
         self.stats = RunStats(
-            start_time=datetime.utcnow().isoformat(),
+            start_time=datetime.now(timezone.utc).isoformat(),
             run_id=run_id
         )
         self.stats.quality.min_score_threshold = min_score
@@ -91,13 +92,18 @@ class IngestionReporter:
 
     def log_warning(self, msg: str):
         """Collect runtime warnings."""
-        self.stats.warnings.append(f"[{datetime.utcnow().isoformat()}] {msg}")
+        self.stats.warnings.append(f"[{datetime.now(timezone.utc).isoformat()}] {msg}")
         logger.warning(f"{msg}")
+
+    def log_document_failure(self, doc_slug: str, reason: str) -> None:
+        """Record a failed document without publishing it as ingested."""
+        self.stats.failed_documents.append({"doc_slug": doc_slug, "reason": reason})
+        logger.error("Document failed: %s | %s", doc_slug, reason)
 
     def save_report(self):
         report_path = self.artifact_dir / "ingest_report.json"
         report_data = asdict(self.stats)
-        report_data["end_time"] = datetime.utcnow().isoformat()
+        report_data["end_time"] = datetime.now(timezone.utc).isoformat()
         validation_res = self._run_validation()
         report_data["validation"] = validation_res
 
