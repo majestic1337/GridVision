@@ -385,9 +385,8 @@ pyclipper==1.4.0
     # via rapidocr
 pycparser==3.12
     # via cffi
-pydantic==2.7.4
+pydantic==2.14.4
     # via
-    #   -r requirements-dev.txt
     #   -r requirements.txt
     #   docling-core
     #   docling-parse
@@ -398,7 +397,7 @@ pydantic==2.7.4
     #   langsmith
     #   pydantic-settings
     #   qdrant-client
-pydantic-core==2.18.4
+pydantic-core==2.50.5
     # via pydantic
 pydantic-settings==2.15.0
     # via
@@ -617,7 +616,9 @@ typing-extensions==4.16.0
     #   torch
     #   typing-inspection
 typing-inspection==0.4.5
-    # via pydantic-settings
+    # via
+    #   pydantic
+    #   pydantic-settings
 tzdata==2026.6
     # via
     #   pandas
