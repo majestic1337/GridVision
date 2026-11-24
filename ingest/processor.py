@@ -5,7 +5,7 @@ import time
 import json
 from pathlib import Path
 from typing import List, Dict, Optional, Union
-from datetime import datetime
+from datetime import datetime, timezone
 
 from config.constants import (
     DEFAULT_CHUNK_OVERLAP,
@@ -28,12 +28,12 @@ except ImportError:
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from .reporting import IngestionReporter
-from .parsing import DocumentParser
+from .parsing import DocumentParser, DocumentParsingError
 from .enrichment import TextNormalizer, QualityScorer, ImageEnricher, ImageEmbedder
 from .foundation import PipelineFoundation
 from .storage import ArtifactStore, AssetManager, ChunkRegistry
 
-logger = logging.getLogger("GridVision_Processor")
+logger = logging.getLogger("gridvision.ingest.processor")
 
 class SparseEncoder:
     def __init__(self, model_name: str = "prithivida/Splade_PP_en_v1"):
@@ -165,7 +165,7 @@ class IngestionProcessor:
             return False
 
         doc_title = raw_path.stem.replace("_", " ").strip() or doc_slug
-        created_at = datetime.utcfromtimestamp(raw_path.stat().st_mtime).replace(microsecond=0).isoformat() + "Z"
+        created_at = (datetime.fromtimestamp(raw_path.stat().st_mtime,tz=timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"))
         tags = self.config.get("default_tags") or []
         if not isinstance(tags, list):
             tags = [str(tags)]
@@ -348,6 +348,7 @@ class IngestionProcessor:
                     q_score, q_reasons = QualityScorer.evaluate(
                         chunk_text,
                         searchable_type,
+                        ocr_conf=self._get_ocr_confidence(metadata),
                         min_word_count=min_word_count,
                         min_ocr_confidence=min_ocr_confidence,
                         min_text_density=min_text_density,
@@ -394,7 +395,7 @@ class IngestionProcessor:
                             "quality_reasons": q_reasons
                         },
                         "provenance": {
-                            "processed_at": datetime.utcnow().isoformat(),
+                            "processed_at": datetime.now(timezone.utc).isoformat(),
                             "pipeline_v": self.config["version"]
                         }
                     }
@@ -416,6 +417,10 @@ class IngestionProcessor:
 
                     self.chunk_registry.record(element.element_id, chunk_uuid)
 
+        except DocumentParsingError as exc:
+            self.reporter.log_document_failure(doc_slug, str(exc))
+            self.logger.error("[DOC] Failed %s: %s", doc_slug, exc)
+            raise
         finally:
             self.asset_manager.close_pdf()
         log_page_summary()
@@ -455,7 +460,7 @@ class IngestionProcessor:
                     "created_at": created_at,
                     "tags": tags,
                     "run_id": self.foundation.run_id,
-                    "ingested_at": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+                    "ingested_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat() + "Z",
                 }
             )
             self.ingested_doc_ids.add(doc_hash)
@@ -463,6 +468,14 @@ class IngestionProcessor:
 
     def finalize(self):
         self.reporter.save_report()
+
+    @staticmethod
+    def _get_ocr_confidence(metadata: Dict) -> float:
+        value = metadata.get("ocr_confidence", metadata.get("ocr_conf", 1.0))
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return 1.0
 
     def embed_existing_assets(self, *, overwrite: bool = False) -> int:
         if not self.image_embedder.active:

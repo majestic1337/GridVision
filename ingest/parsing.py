@@ -21,7 +21,11 @@ except ImportError:
     DOCLING_AVAILABLE = False
 
 
-logger = logging.getLogger("GridVision_Parser")
+logger = logging.getLogger("gridvision.ingest.parser")
+
+
+class DocumentParsingError(RuntimeError):
+    """Raised when a document cannot be converted into the parser IR."""
 
 @dataclass
 class ParsedElement:
@@ -235,7 +239,7 @@ class DocumentParser:
 
     def _convert_docling(self, file_path: Path) -> Any:
         if not DOCLING_AVAILABLE or self.converter is None:
-            raise RuntimeError("Docling Missing")
+            raise DocumentParsingError("Docling is unavailable")
 
         logger.info(f"Parsing structure for {file_path.name}...")
 
@@ -244,7 +248,7 @@ class DocumentParser:
             return res.document
         except Exception as e:
             logger.error(f"Docling conversion failed: {e}")
-            return None
+            raise DocumentParsingError(f"Docling conversion failed for {file_path}") from e
 
     def extract_docling_items(self, doc: Any) -> List[Tuple[Any, str]]:
         items: List[Tuple[Any, str]] = []
