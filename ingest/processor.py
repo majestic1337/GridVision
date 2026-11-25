@@ -32,6 +32,8 @@ from .parsing import DocumentParser, DocumentParsingError
 from .enrichment import TextNormalizer, QualityScorer, ImageEnricher, ImageEmbedder
 from .foundation import PipelineFoundation
 from .storage import ArtifactStore, AssetManager, ChunkRegistry
+from .generation_manager import GenerationManager
+from .catalog_exporter import CatalogExporter
 
 logger = logging.getLogger("gridvision.ingest.processor")
 
@@ -84,6 +86,13 @@ class IngestionProcessor:
             logger=self.logger,
         )
         self.artifacts.initialize(reset=reset_artifacts)
+        self.generation_manager = GenerationManager(
+            root_dir=self.foundation.root_dir,
+            artifact_dir=artifact_dir,
+            asset_dir=self.foundation.root_dir / self.config["paths"]["processed_assets"],
+            logger=self.logger,
+        )
+        self.catalog_exporter = CatalogExporter(artifact_dir, self.generation_manager, self.logger)
         self.skip_existing = skip_existing
         self.ingested_doc_ids = self.artifacts.load_ingested_doc_ids()
         if self.skip_existing and self.ingested_doc_ids:
@@ -188,7 +197,19 @@ class IngestionProcessor:
         if log_every_n < 1:
             log_every_n = 1
 
+        generation = self.generation_manager.begin(doc_hash)
+        generation_store = ArtifactStore(
+            root_dir=self.foundation.root_dir,
+            artifact_dir=generation.staging_dir,
+            logger=self.logger,
+        )
+        generation_store.initialize(reset=False)
+        # Assets are staged beside the generation. Their paths are rewritten to
+        # root-relative paths when the generation is atomically published.
+        self.asset_manager.asset_root = generation.staging_dir / "assets"
         self.asset_manager.start_document(doc_hash)
+        # Registries are document-scoped; never carry mappings into the next PDF.
+        self.chunk_registry = ChunkRegistry()
 
         self.logger.info(f"Processing {doc_slug} ({doc_hash})...")
         self.logger.info(f"[DOC] Source: {source_uri}")
@@ -420,14 +441,22 @@ class IngestionProcessor:
         except DocumentParsingError as exc:
             self.reporter.log_document_failure(doc_slug, str(exc))
             self.logger.error("[DOC] Failed %s: %s", doc_slug, exc)
+            self.generation_manager.abort(generation)
+            raise
+        except Exception:
+            self.generation_manager.abort(generation)
             raise
         finally:
             self.asset_manager.close_pdf()
         log_page_summary()
         assets_manifest = self.asset_manager.current_assets()
-        self.artifacts.write_chunks(chunks_buffer)
-        self.artifacts.write_assets_manifest(assets_manifest)
-        self.artifacts.write_maps(
+        for record in chunks_buffer:
+            record["generation_id"] = generation.generation_id
+        for asset in assets_manifest:
+            asset["generation_id"] = generation.generation_id
+        generation_store.write_chunks(chunks_buffer)
+        generation_store.write_assets_manifest(assets_manifest)
+        generation_store.write_maps(
             self.chunk_registry.element_to_chunks,
             self.asset_manager.page_to_assets,
         )
@@ -451,7 +480,7 @@ class IngestionProcessor:
             elapsed_s,
         )
         if doc_hash not in self.ingested_doc_ids:
-            self.artifacts.append_document_record(
+            generation_store.append_document_record(
                 {
                     "doc_id": doc_hash,
                     "doc_slug": doc_slug,
@@ -461,9 +490,22 @@ class IngestionProcessor:
                     "tags": tags,
                     "run_id": self.foundation.run_id,
                     "ingested_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat() + "Z",
+                    "generation_id": generation.generation_id,
+                    "status": "completed",
                 }
             )
-            self.ingested_doc_ids.add(doc_hash)
+        else:
+            generation_store.append_document_record({
+                "doc_id": doc_hash, "doc_slug": doc_slug, "title": doc_title,
+                "source_uri": source_uri, "created_at": created_at, "tags": tags,
+                "run_id": self.foundation.run_id,
+                "ingested_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat() + "Z",
+                "generation_id": generation.generation_id, "status": "completed",
+            })
+        self.generation_manager.commit(generation)
+        self.catalog_exporter.export()
+        # The catalog is the compatibility view; future documents must see it.
+        self.ingested_doc_ids.add(doc_hash)
         return True
 
     def finalize(self):
