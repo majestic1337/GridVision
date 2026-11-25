@@ -1,6 +1,7 @@
 import json
 import hashlib
 import logging
+import shutil
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple, TYPE_CHECKING
 
@@ -37,6 +38,14 @@ class ArtifactStore:
             elements_path.write_text("{}", encoding="utf-8")
             pages_path.write_text("{}", encoding="utf-8")
             docs_path.write_text("", encoding="utf-8")
+            # Reset is a complete ingestion reset, not just a catalog reset.
+            shutil.rmtree(self.root_dir / "data/processed/assets", ignore_errors=True)
+            configured_assets = self.root_dir / "data/processed/assets"
+            if self.artifact_dir.parent.name == "processed":
+                configured_assets = self.artifact_dir.parent / "assets"
+            shutil.rmtree(configured_assets, ignore_errors=True)
+            shutil.rmtree(self.artifact_dir.parent / "docs", ignore_errors=True)
+            (self.artifact_dir.parent / "docs").mkdir(parents=True, exist_ok=True)
             return
 
         self._ensure_file(chunks_path, "")
@@ -174,6 +183,7 @@ class AssetManager:
         self.asset_dir = self.asset_root / doc_hash
         self.asset_dir.mkdir(parents=True, exist_ok=True)
         self._doc_assets = []
+        self.page_to_assets = {}
 
     def current_assets(self) -> List[Dict[str, Any]]:
         return list(self._doc_assets)
