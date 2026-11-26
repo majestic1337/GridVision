@@ -15,6 +15,10 @@ parser:
   version_check: ">=1.0.0"
   ocr_strategy: "auto"  # force / auto / no_ocr
   table_mode: "markdown"
+  ocr_engine: "rapidocr"
+  ocr_language: "eng"
+  ocr_dpi: 200
+  synthesis_enabled: true
 
 profiling:
   enabled: true
@@ -22,6 +26,11 @@ profiling:
   scanned_raster_coverage_threshold: 0.70
   tiled_slice_count_threshold: 3
   thumbnail_variance_threshold: 1.0
+
+table_processing:
+  enabled: true
+  detection_mode: "hybrid"
+  reinject_headers_on_split: true
 
 chunking:
   base_chunk_size: 1000

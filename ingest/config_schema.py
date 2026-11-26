@@ -31,6 +31,7 @@ class ParserConfig(ConfigModel):
     ocr_engine: str = "tesseract"
     ocr_language: str = "eng"
     ocr_dpi: int = Field(default=200, gt=0)
+    synthesis_enabled: bool = True
 
 
 class ProfilingConfig(ConfigModel):
