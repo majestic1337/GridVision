@@ -101,7 +101,7 @@ class IngestionProcessor:
                 len(self.ingested_doc_ids),
             )
 
-        self.parser = DocumentParser()
+        self.parser = DocumentParser(config=self.config)
         self.image_enricher = ImageEnricher()
         image_embed_conf = self.config.get("image_embeddings", {})
         env_embed = os.getenv("GV_IMAGE_EMBEDDINGS")
@@ -326,6 +326,10 @@ class IngestionProcessor:
                             final_content = TextNormalizer.normalize(caption)
                             searchable_type = "image_caption"
                             metadata["caption_json"] = json_data
+
+                elif element.type == "vector_graphic":
+                    final_content = TextNormalizer.normalize(element.content)
+                    searchable_type = "vector_graphic"
 
                 if not final_content:
                     if progress_verbose:

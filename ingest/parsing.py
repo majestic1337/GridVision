@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import List, Dict, Any, Tuple, Optional, Generator, Iterable
 from dataclasses import dataclass
 from collections import defaultdict
+from .profiler import DocumentProfiler, PageProfile
+from .adapters.native_adapter import NativePdfAdapter
 
 from config.constants import HASH_CHUNK_SIZE, PARA_Y_GAP
 
@@ -177,7 +179,14 @@ class ParagraphBuffer:
 
 
 class DocumentParser:
-    def __init__(self):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
+        config = config or {}
+        parser_config = config.get("parser", {})
+        profiling_config = config.get("profiling", {})
+        self.parser_strategy = parser_config.get("strategy", "auto")
+        self.profiling_enabled = bool(profiling_config.get("enabled", True))
+        self.profiler = DocumentProfiler(profiling_config)
+        self.native_adapter = NativePdfAdapter()
         if not DOCLING_AVAILABLE:
             logger.warning("Docling not found. Install with `pip install docling`.")
             self.converter = None
@@ -199,13 +208,48 @@ class DocumentParser:
         return hasher.hexdigest(), doc_slug
 
     def parse_file(self, file_path: Path, doc_id: str) -> Generator[ParsedElement, None, None]:
-        doc = self._convert_docling(file_path)
-        if doc is None:
-            return
+        profiles = self.profile_document(file_path) if self.profiling_enabled else []
+        profile_by_page = {profile.page_number: profile for profile in profiles}
+        adaptive_pages = {
+            profile.page_number
+            for profile in profiles
+            if profile.classification in {"native", "vector"}
+        }
+        native_pages = (
+            {profile.page_number for profile in profiles}
+            if self.parser_strategy == "native"
+            else {profile.page_number for profile in profiles if profile.classification == "native"}
+        )
 
-        docling_items = self.extract_docling_items(doc)
+        should_use_native = self.parser_strategy == "native" or (
+            self.parser_strategy == "auto" and bool(profiles) and len(adaptive_pages) == len(profiles)
+        )
+        doc = None
+        docling_items: List[Tuple[Any, str]] = []
+        if not should_use_native and self.parser_strategy != "native":
+            try:
+                doc = self._convert_docling(file_path)
+                docling_items = self.extract_docling_items(doc)
+            except DocumentParsingError:
+                # Native extraction remains useful for documents whose pages
+                # are readable even when Docling cannot convert the file.
+                if not profiles:
+                    raise
+                logger.warning("Falling back to adaptive native extraction for %s", file_path.name)
+
+        native_items = (
+            []
+            if self.parser_strategy not in {"auto", "native"}
+            else self.extract_native_items(file_path, profiles, native_pages)
+        )
+        if self.parser_strategy in {"auto", "native"} and adaptive_pages:
+            docling_items = [
+                (item, type_str)
+                for item, type_str in docling_items
+                if self._infer_page_no(item) not in adaptive_pages
+            ]
         pymupdf_items = self.extract_pymupdf_images(file_path)
-        all_items = docling_items + pymupdf_items
+        all_items = docling_items + native_items + pymupdf_items
 
         logger.info(
             f"Found {len(all_items)} total elements "
@@ -233,9 +277,73 @@ class DocumentParser:
                 "page_no": page_no,
                 "page_idx": page_idx,
                 "page_label": page_label,
+                "profile": profile_by_page.get(page_no),
             }
 
             yield from self.page_to_elements(page_items, page_ctx)
+
+    def profile_document(self, file_path: Path) -> List[PageProfile]:
+        if not PYMUPDF_AVAILABLE:
+            return []
+        document = fitz.open(str(file_path))
+        try:
+            profiles = self.profiler.profile_document(document)
+        finally:
+            document.close()
+        for profile in profiles:
+            logger.info(
+                "[PROFILE] Page %s: %s chars=%s raster=%.2f drawings=%s images=%s variance=%.2f",
+                profile.page_number,
+                profile.classification,
+                profile.native_char_count,
+                profile.raster_coverage,
+                profile.drawing_count,
+                profile.image_count,
+                profile.thumbnail_variance,
+            )
+        return profiles
+
+    def extract_native_items(
+        self,
+        file_path: Path,
+        profiles: List[PageProfile],
+        native_pages: set[int],
+    ) -> List[Tuple[Any, str]]:
+        if not PYMUPDF_AVAILABLE:
+            return []
+        items: List[Tuple[Any, str]] = []
+        document = fitz.open(str(file_path))
+        try:
+            for profile in profiles:
+                if profile.page_number not in native_pages and profile.classification != "vector":
+                    continue
+                page = document.load_page(profile.page_idx)
+                for block in self.native_adapter.extract_page(page):
+                    items.append((
+                        {
+                            "kind": "native_text",
+                            "page_no": profile.page_number,
+                            "text": block.text,
+                            "bbox": block.bbox,
+                            "subtype": block.subtype,
+                        },
+                        "text",
+                    ))
+                if profile.classification == "vector":
+                    marker = self.native_adapter.extract_vector_marker(page, profile.page_number)
+                    if marker:
+                        items.append((
+                            {
+                                "kind": "vector_graphic",
+                                "page_no": profile.page_number,
+                                "text": marker,
+                                "drawing_count": profile.drawing_count,
+                            },
+                            "vector_graphic",
+                        ))
+        finally:
+            document.close()
+        return items
 
     def _convert_docling(self, file_path: Path) -> Any:
         if not DOCLING_AVAILABLE or self.converter is None:
@@ -353,7 +461,11 @@ class DocumentParser:
 
             if base_type == "text":
                 subtype = label_to_subtype(item)
+                if isinstance(item, dict) and item.get("kind") == "native_text":
+                    subtype = item.get("subtype", "body")
                 txt = (getattr(item, "text", "") or "").strip()
+                if isinstance(item, dict):
+                    txt = str(item.get("text", "") or "").strip()
 
                 if subtype != "body":
                     flushed = buffer.flush()
@@ -382,7 +494,7 @@ class DocumentParser:
                     "seq_id": seq_id,
                     "raw_table": item,
                     "parent_doc": doc,
-                    "source": "docling",
+                    "source": "native" if isinstance(item, dict) and item.get("kind") == "native_text" else "docling",
                 }
                 yield ParsedElement(
                     element_id=stable_id,
@@ -419,6 +531,23 @@ class DocumentParser:
                     bbox=bbox,
                     metadata=meta,
                 )
+
+            if base_type == "vector_graphic":
+                seq_id = buffer.next_seq_id()
+                stable_id = self._generate_stable_id(doc_id, page_idx, seq_id, "vector")
+                yield ParsedElement(
+                    element_id=stable_id,
+                    type="vector_graphic",
+                    content=str(item.get("text", "Vector graphic")) if isinstance(item, dict) else "Vector graphic",
+                    page_idx=page_idx,
+                    page_number=page_no,
+                    page_label=page_label,
+                    bbox=None,
+                    metadata={
+                        "drawing_count": item.get("drawing_count", 0) if isinstance(item, dict) else 0,
+                        "source": "native",
+                    },
+                )
                 continue
 
         flushed = buffer.flush()
@@ -431,15 +560,17 @@ class DocumentParser:
     def _infer_page_no(self, item: Any) -> int:
         if hasattr(item, "prov") and getattr(item, "prov", None) and len(item.prov)>0:
             return int(item.prov[0].page_no)
-        if isinstance(item, dict) and item.get("kind") == "pymupdf_image":
+        if isinstance(item, dict) and item.get("page_no") is not None:
             return int(item["page_no"])
         if hasattr(item, "page_no"):
             return int(item.page_no)
         return 1
 
     def _get_safe_bbox(self, item: Any) -> Optional[List[float]]:
-        if isinstance(item, dict) and item.get("kind") == "pymupdf_image":
+        if isinstance(item, dict) and item.get("kind") in {"pymupdf_image", "native_text"}:
             rect = item.get("rect")
+            if rect is None:
+                rect = item.get("bbox")
             if rect and len(rect) == 4:
                 return [float(rect[0]), float(rect[1]), float(rect[2]), float(rect[3])]
             return None
