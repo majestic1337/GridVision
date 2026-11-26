@@ -11,9 +11,17 @@ paths:
 
 parser:
   engine: "docling"
+  strategy: "auto"  # auto / native / docling / ocr
   version_check: ">=1.0.0"
   ocr_strategy: "auto"  # force / auto / no_ocr
   table_mode: "markdown"
+
+profiling:
+  enabled: true
+  min_native_chars: 150
+  scanned_raster_coverage_threshold: 0.70
+  tiled_slice_count_threshold: 3
+  thumbnail_variance_threshold: 1.0
 
 chunking:
   base_chunk_size: 1000
