@@ -35,6 +35,10 @@ class PageProfile:
         return self.classification == "vector"
 
     @property
+    def is_tiled_scan(self) -> bool:
+        return self.classification == "tiled_scan"
+
+    @property
     def native_chars(self) -> int:
         return self.native_char_count
 
@@ -120,6 +124,13 @@ class DocumentProfiler:
     ) -> str:
         # A page made of many image strips is a scan even if each individual
         # strip has an extreme aspect ratio. Keep the signal at page level.
+        tiled = (
+            image_count >= self.tiled_slice_count_threshold
+            and raster_coverage >= self.raster_coverage_threshold
+        )
+        if tiled:
+            return "tiled_scan"
+
         scanned = raster_coverage >= self.raster_coverage_threshold or (
             image_count >= self.tiled_slice_count_threshold
             and raster_coverage >= self.raster_coverage_threshold * 0.5
