@@ -51,7 +51,7 @@ def test_profiler_classifies_tiled_raster_pages_at_page_level():
 
     profile = DocumentProfiler().profile_page(page)
 
-    assert profile.classification == "scanned"
+    assert profile.classification == "tiled_scan"
     assert profile.image_count == 3
     assert profile.raster_coverage == 1.0
 
