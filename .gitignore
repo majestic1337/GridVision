@@ -5,6 +5,7 @@ __pycache__/
 .venv/
 venv/
 *.env
+*.log
 
 data/raw_pdfs/*
 data/processed/*

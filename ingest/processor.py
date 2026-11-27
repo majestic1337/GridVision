@@ -34,6 +34,7 @@ from .foundation import PipelineFoundation
 from .storage import ArtifactStore, AssetManager, ChunkRegistry
 from .generation_manager import GenerationManager
 from .catalog_exporter import CatalogExporter
+from .chunking import TableChunker
 
 logger = logging.getLogger("gridvision.ingest.processor")
 
@@ -119,6 +120,11 @@ class IngestionProcessor:
         )
         
         chunk_conf = self.config.get("chunking", {})
+        table_conf = self.config.get("table_processing", {})
+        self.table_chunker = TableChunker(
+            max_chunk_size=chunk_conf.get("table_max_chunk_size", 1500),
+            reinject_headers=table_conf.get("reinject_headers_on_split", True),
+        )
         self.splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_conf.get("base_chunk_size", DEFAULT_CHUNK_SIZE),
             chunk_overlap=chunk_conf.get("chunk_overlap", DEFAULT_CHUNK_OVERLAP),
@@ -295,6 +301,8 @@ class IngestionProcessor:
 
                 if element.type == "text":
                     final_content = TextNormalizer.normalize_keep_paragraphs(element.content)
+                    if metadata.get("source") == "tiled_synthesis" or metadata.get("subtype") == "ocr":
+                        searchable_type = "ocr_text"
 
                 elif element.type == "table":
                     raw_table = metadata.get("raw_table") or metadata.get("raw_item")
@@ -303,7 +311,9 @@ class IngestionProcessor:
                             md_text = raw_table.export_to_markdown(doc=parent_doc)
                         except TypeError:
                             md_text = raw_table.export_to_markdown()
-                        final_content = TextNormalizer.normalize(md_text)
+                        # Preserve row boundaries for TableChunker; flattening
+                        # whitespace here would make header reinjection impossible.
+                        final_content = TextNormalizer.normalize_keep_paragraphs(md_text)
                         searchable_type = "table_md"
 
                 elif element.type == "image":
@@ -345,7 +355,12 @@ class IngestionProcessor:
                 max_para_chars = chunk_conf.get("max_paragraph_chars", DEFAULT_MAX_PARAGRAPH_CHARS)
                 base_chunk_size = chunk_conf.get("base_chunk_size", DEFAULT_CHUNK_SIZE)
 
-                if searchable_type in ("text", "table_md", "ocr_text"):
+                if searchable_type == "table_md":
+                    text_chunks = self.table_chunker.chunk(
+                        final_content,
+                        max_chunk_size=chunk_conf.get("table_max_chunk_size", 1500),
+                    )
+                elif searchable_type in ("text", "ocr_text"):
                     prelim = paragraph_chunk_text(
                         final_content,
                         min_words=min_para_words,

@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from collections import defaultdict
 from .profiler import DocumentProfiler, PageProfile
 from .adapters.native_adapter import NativePdfAdapter
+from .synthesizer import TiledPageSynthesizer
+from .table_engine import TableProcessingEngine
 
 from config.constants import HASH_CHUNK_SIZE, PARA_Y_GAP
 
@@ -183,10 +185,18 @@ class DocumentParser:
         config = config or {}
         parser_config = config.get("parser", {})
         profiling_config = config.get("profiling", {})
+        table_config = config.get("table_processing", {})
         self.parser_strategy = parser_config.get("strategy", "auto")
         self.profiling_enabled = bool(profiling_config.get("enabled", True))
+        self.synthesis_enabled = bool(parser_config.get("synthesis_enabled", True))
         self.profiler = DocumentProfiler(profiling_config)
         self.native_adapter = NativePdfAdapter()
+        self.synthesizer = TiledPageSynthesizer(
+            dpi=parser_config.get("ocr_dpi", 200),
+            ocr_enabled=self.synthesis_enabled,
+            ocr_engine=parser_config.get("ocr_engine", "rapidocr"),
+        )
+        self.table_engine = TableProcessingEngine() if table_config.get("enabled", True) else None
         if not DOCLING_AVAILABLE:
             logger.warning("Docling not found. Install with `pip install docling`.")
             self.converter = None
@@ -213,13 +223,18 @@ class DocumentParser:
         adaptive_pages = {
             profile.page_number
             for profile in profiles
-            if profile.classification in {"native", "vector"}
+            if profile.classification in {"native", "vector", "tiled_scan"}
         }
         native_pages = (
             {profile.page_number for profile in profiles}
             if self.parser_strategy == "native"
             else {profile.page_number for profile in profiles if profile.classification == "native"}
         )
+        tiled_profiles = {
+            profile.page_number: profile
+            for profile in profiles
+            if profile.classification == "tiled_scan"
+        }
 
         should_use_native = self.parser_strategy == "native" or (
             self.parser_strategy == "auto" and bool(profiles) and len(adaptive_pages) == len(profiles)
@@ -230,6 +245,8 @@ class DocumentParser:
             try:
                 doc = self._convert_docling(file_path)
                 docling_items = self.extract_docling_items(doc)
+                if self.table_engine is not None:
+                    docling_items = self.table_engine.filter_structured_items(docling_items)
             except DocumentParsingError:
                 # Native extraction remains useful for documents whose pages
                 # are readable even when Docling cannot convert the file.
@@ -242,14 +259,23 @@ class DocumentParser:
             if self.parser_strategy not in {"auto", "native"}
             else self.extract_native_items(file_path, profiles, native_pages)
         )
+        synthesized_items = (
+            self.extract_synthesized_items(file_path, tiled_profiles)
+            if self.synthesis_enabled and tiled_profiles
+            else []
+        )
         if self.parser_strategy in {"auto", "native"} and adaptive_pages:
             docling_items = [
                 (item, type_str)
                 for item, type_str in docling_items
                 if self._infer_page_no(item) not in adaptive_pages
             ]
-        pymupdf_items = self.extract_pymupdf_images(file_path)
-        all_items = docling_items + native_items + pymupdf_items
+        pymupdf_items = [
+            (item, item_type)
+            for item, item_type in self.extract_pymupdf_images(file_path)
+            if self._infer_page_no(item) not in tiled_profiles
+        ]
+        all_items = docling_items + native_items + synthesized_items + pymupdf_items
 
         logger.info(
             f"Found {len(all_items)} total elements "
@@ -341,6 +367,42 @@ class DocumentParser:
                             },
                             "vector_graphic",
                         ))
+        finally:
+            document.close()
+        return items
+
+    def extract_synthesized_items(
+        self,
+        file_path: Path,
+        tiled_profiles: Dict[int, PageProfile],
+    ) -> List[Tuple[Any, str]]:
+        if not PYMUPDF_AVAILABLE:
+            return []
+        items: List[Tuple[Any, str]] = []
+        document = fitz.open(str(file_path))
+        try:
+            for page_number, profile in tiled_profiles.items():
+                page = document.load_page(profile.page_idx)
+                synthesized = self.synthesizer.synthesize(page, page_number)
+                if not synthesized.ocr.text:
+                    logger.warning("[SYNTH] Page %s rendered but OCR produced no text", page_number)
+                    continue
+                items.append((
+                    {
+                        "kind": "tiled_ocr",
+                        "page_no": page_number,
+                        "text": synthesized.ocr.text,
+                        "ocr_confidence": synthesized.ocr.confidence,
+                        "png_bytes": synthesized.png_bytes,
+                    },
+                    "text",
+                ))
+                logger.info(
+                    "[SYNTH] Page %s: %s OCR characters, confidence=%.3f",
+                    page_number,
+                    len(synthesized.ocr.text),
+                    synthesized.ocr.confidence,
+                )
         finally:
             document.close()
         return items
@@ -460,6 +522,30 @@ class DocumentParser:
             bbox = self._get_safe_bbox(item)
 
             if base_type == "text":
+                if isinstance(item, dict) and item.get("kind") == "tiled_ocr":
+                    flushed = buffer.flush()
+                    if flushed is not None:
+                        yield flushed
+                    seq_id = buffer.next_seq_id()
+                    yield ParsedElement(
+                        element_id=self._generate_stable_id(doc_id, page_idx, seq_id, "ocr"),
+                        type="text",
+                        content=str(item.get("text", "")),
+                        page_idx=page_idx,
+                        page_number=page_no,
+                        page_label=page_label,
+                        bbox=None,
+                        metadata={
+                            "raw_item": None,
+                            "subtype": "ocr",
+                            "seq_id": seq_id,
+                            "raw_table": None,
+                            "parent_doc": doc,
+                            "source": "tiled_synthesis",
+                            "ocr_confidence": item.get("ocr_confidence", 1.0),
+                        },
+                    )
+                    continue
                 subtype = label_to_subtype(item)
                 if isinstance(item, dict) and item.get("kind") == "native_text":
                     subtype = item.get("subtype", "body")
